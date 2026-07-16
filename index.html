@@ -27,7 +27,7 @@
   .wrap{max-width:720px;margin:0 auto;padding:28px 22px 60px}
   a{color:var(--amber)}
   .mono{font-family:"IBM Plex Mono",monospace}
-
+ 
   header{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
   .brand h1{font-family:"Fraunces",serif;font-weight:500;font-size:32px;line-height:1;margin:0;letter-spacing:-.01em}
   .brand h1 .dot{color:var(--amber)}
@@ -40,7 +40,7 @@
   .scorechip{display:flex;align-items:baseline;gap:8px;justify-content:flex-end;width:100%;padding-right:2px}
   .scorechip .n{font-family:"IBM Plex Mono",monospace;font-size:20px;color:var(--amber)}
   .scorechip .l{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
-
+ 
   .filters{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:0 0 20px;padding:13px 15px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
   .filters .flabel{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-right:4px;width:100%}
   .chip{border:1px solid var(--line);background:transparent;color:var(--muted);font-family:inherit;font-size:12.5px;font-weight:500;padding:6px 12px;border-radius:20px;cursor:pointer;transition:.12s}
@@ -48,10 +48,10 @@
   .chip.on{background:var(--amber);border-color:var(--amber);color:#20140a}
   .chip.mini{padding:5px 10px;font-size:12px}
   .filters .allbtn{margin-left:auto;font-size:11px;color:var(--muted);background:none;border:0;cursor:pointer;text-decoration:underline;font-family:inherit}
-
+ 
   .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
   .study{padding:22px}
-
+ 
   .scope{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(180deg,#0b1615,#0e1c1a)}
   canvas{display:block;width:100%;height:150px}
   .scope .status{position:absolute;left:14px;bottom:11px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.04em;text-shadow:0 1px 6px #000}
@@ -62,7 +62,7 @@
   .attrib{font-size:11.5px;color:var(--muted)}
   .attrib .lic{color:var(--moss)}
   .attrib a{text-decoration:none;border-bottom:1px dotted var(--line)}
-
+ 
   .typerow{display:flex;gap:9px;margin-top:20px}
   .typerow input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-family:inherit;font-size:15px;padding:13px 15px;outline:none}
   .typerow input:focus{border-color:var(--amber)}
@@ -73,11 +73,11 @@
   .altlinks button{background:none;border:0;color:var(--muted);cursor:pointer;font-family:inherit;font-size:12.5px;padding:0;text-decoration:underline;text-underline-offset:3px}
   .altlinks button:hover{color:var(--ink)}
   .altlinks .halfnote{color:var(--amber)}
-
+ 
   .famchips{display:none;flex-wrap:wrap;gap:7px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
   .famchips.show{display:flex}
   .famchips .hint{width:100%;font-size:11px;color:var(--muted);margin-bottom:2px}
-
+ 
   .reveal{margin-top:18px;display:none}
   .reveal.show{display:block}
   .reveal .bird{font-family:"Fraunces",serif;font-size:26px;font-weight:500;line-height:1.1}
@@ -91,7 +91,7 @@
   .nextbtn{margin-top:20px}
   .nextbtn button{width:100%;border:0;background:var(--amber);color:#20140a;font-family:inherit;font-weight:600;font-size:15px;padding:14px;border-radius:12px;cursor:pointer}
   .nextbtn button:disabled{background:var(--panel2);color:var(--muted);cursor:default}
-
+ 
   footer{margin-top:26px;color:var(--muted);font-size:12px;line-height:1.6;border-top:1px solid var(--line);padding-top:16px}
   footer code{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11.5px}
   .tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);border:1px solid var(--line);border-radius:20px;padding:3px 10px;margin-bottom:14px}
@@ -107,21 +107,14 @@
     </div>
     <div class="controls">
       <div class="field"><label for="region">Region</label>
-        <select id="region">
-          <option value="Europe" selected>Europe</option>
-          <option value="North America">North America</option>
-          <option value="Asia">Asia</option>
-          <option value="Africa">Africa</option>
-          <option value="South America">South America</option>
-          <option value="Australasia">Australasia</option>
-        </select>
+        <select id="region"><option value="Europe" selected>Europe</option></select>
       </div>
       <div class="scorechip"><span class="n" id="score">0</span><span class="l">points</span></div>
     </div>
   </header>
-
+ 
   <div class="filters" id="filters"><span class="flabel">Families</span></div>
-
+ 
   <section class="card study" id="study">
     <div id="studyBody">
       <div class="scope">
@@ -146,7 +139,7 @@
     </div>
     <div class="nextbtn"><button id="nextBtn" disabled>Next bird</button></div>
   </section>
-
+ 
   <footer>
     <strong>How the audio works —</strong> pick a region and the pool is every species in the catalogue for that
     continent (filter by family if you want to drill one group). Recordings are pulled live from Xeno-canto's
@@ -155,236 +148,300 @@
     species has no fetchable clip, a short synthesised tone stands in so the quiz never stalls.
   </footer>
 </div>
-
+ 
 <audio id="player" preload="none"></audio>
-
+ 
 <script>
 /* ============================================================================
    DAWN CHORUS — region + taxonomic-family birdsong trainer
    ========================================================================== */
-
+ 
 /* Linnaean family -> friendly English label (taxonomy shown on reveal). */
-const FAMILY_LABELS = {
-  Turdidae:"Thrushes", Muscicapidae:"Chats & Old World flycatchers", Paridae:"Tits & chickadees",
-  Fringillidae:"True finches", Emberizidae:"Old World buntings", Sylviidae:"Sylviid warblers",
-  Phylloscopidae:"Leaf warblers", Acrocephalidae:"Reed warblers", Troglodytidae:"Wrens",
-  Sittidae:"Nuthatches", Certhiidae:"Treecreepers", Alaudidae:"Larks", Cuculidae:"Cuckoos",
-  Charadriidae:"Plovers & lapwings", Scolopacidae:"Sandpipers, snipe & curlews",
-  Falconidae:"Falcons & caracaras", Accipitridae:"Hawks, kites & eagles",
-  Cardinalidae:"Cardinals & grosbeaks", Corvidae:"Crows & jays", Passerellidae:"New-World sparrows",
-  Icteridae:"New-World blackbirds & orioles", Parulidae:"New-World warblers",
-  Mimidae:"Mockingbirds & thrashers", Picidae:"Woodpeckers", Columbidae:"Pigeons & doves",
-  Strigidae:"Owls", Bombycillidae:"Waxwings", Tyrannidae:"Tyrant flycatchers",
-  Sturnidae:"Starlings & mynas", Pycnonotidae:"Bulbuls", Cisticolidae:"Cisticolas & allies",
-  Dicruridae:"Drongos", Laniidae:"Shrikes", Zosteropidae:"White-eyes", Passeridae:"Old-World sparrows",
-  Motacillidae:"Wagtails & pipits", Paradoxornithidae:"Parrotbills", Cettiidae:"Bush warblers",
-  Alcedinidae:"Kingfishers", Phasianidae:"Pheasants & allies", Threskiornithidae:"Ibises",
-  Musophagidae:"Turacos", Scopidae:"Hamerkop", Coliidae:"Mousebirds", Bucerotidae:"Hornbills",
-  Ploceidae:"Weavers", Estrildidae:"Waxbills & munias", Numididae:"Guineafowl",
-  Furnariidae:"Ovenbirds", Thraupidae:"Tanagers", Psittacidae:"New-World parrots",
-  Laridae:"Gulls", Artamidae:"Butcherbirds & allies", Rhipiduridae:"Fantails",
-  Cacatuidae:"Cockatoos", Psittaculidae:"Old-World parrots", Maluridae:"Fairywrens",
-  Monarchidae:"Monarch flycatchers", Meliphagidae:"Honeyeaters", Hirundinidae:"Swallows & martins",
-  Podargidae:"Frogmouths",
-};
-
+const FAMILY_LABELS = {Anatidae:"Ducks, geese & swans", Phasianidae:"Pheasants, grouse & allies", Podicipedidae:"Grebes", Columbidae:"Pigeons & doves", Cuculidae:"Cuckoos", Apodidae:"Swifts", Caprimulgidae:"Nightjars", Rallidae:"Rails, crakes & coots", Gruidae:"Cranes", Otididae:"Bustards", Haematopodidae:"Oystercatchers", Recurvirostridae:"Stilts & avocets", Burhinidae:"Stone-curlews", Charadriidae:"Plovers & lapwings", Scolopacidae:"Sandpipers, snipe & curlews", Laridae:"Gulls & terns", Alcidae:"Auks", Gaviidae:"Loons", Procellariidae:"Shearwaters & petrels", Hydrobatidae:"Storm-petrels", Sulidae:"Gannets", Phalacrocoracidae:"Cormorants & shags", Ciconiidae:"Storks", Threskiornithidae:"Ibises & spoonbills", Ardeidae:"Herons, egrets & bitterns", Pandionidae:"Osprey", Accipitridae:"Hawks, kites, eagles & vultures", Falconidae:"Falcons", Tytonidae:"Barn owls", Strigidae:"Owls", Upupidae:"Hoopoes", Coraciidae:"Rollers", Meropidae:"Bee-eaters", Alcedinidae:"Kingfishers", Picidae:"Woodpeckers", Oriolidae:"Orioles", Laniidae:"Shrikes", Corvidae:"Crows, jays & allies", Paridae:"Tits", Panuridae:"Bearded reedling", Remizidae:"Penduline-tits", Alaudidae:"Larks", Hirundinidae:"Swallows & martins", Aegithalidae:"Long-tailed tits", Phylloscopidae:"Leaf warblers", Acrocephalidae:"Reed & marsh warblers", Locustellidae:"Grassbird warblers", Cisticolidae:"Cisticolas", Sylviidae:"Sylviid warblers", Regulidae:"Kinglets", Troglodytidae:"Wrens", Sittidae:"Nuthatches", Tichodromidae:"Wallcreeper", Certhiidae:"Treecreepers", Sturnidae:"Starlings", Cinclidae:"Dippers", Turdidae:"Thrushes", Muscicapidae:"Chats & flycatchers", Passeridae:"Old-World sparrows", Prunellidae:"Accentors", Motacillidae:"Wagtails & pipits", Fringillidae:"Finches", Emberizidae:"Buntings"};
+ 
 /* [ English, German (Europe only, else ""), Scientific, Region, Family ] */
 const RAW = [
-  // ---------- EUROPE ----------
-  ["Common Blackbird","Amsel","Turdus merula","Europe","Turdidae"],
-  ["Song Thrush","Singdrossel","Turdus philomelos","Europe","Turdidae"],
-  ["Mistle Thrush","Misteldrossel","Turdus viscivorus","Europe","Turdidae"],
-  ["Fieldfare","Wacholderdrossel","Turdus pilaris","Europe","Turdidae"],
-  ["Redwing","Rotdrossel","Turdus iliacus","Europe","Turdidae"],
-  ["European Robin","Rotkehlchen","Erithacus rubecula","Europe","Muscicapidae"],
-  ["Common Nightingale","Nachtigall","Luscinia megarhynchos","Europe","Muscicapidae"],
-  ["Common Redstart","Gartenrotschwanz","Phoenicurus phoenicurus","Europe","Muscicapidae"],
-  ["European Stonechat","Schwarzkehlchen","Saxicola rubicola","Europe","Muscicapidae"],
-  ["European Pied Flycatcher","Trauerschnäpper","Ficedula hypoleuca","Europe","Muscicapidae"],
-  ["Spotted Flycatcher","Grauschnäpper","Muscicapa striata","Europe","Muscicapidae"],
-  ["Great Tit","Kohlmeise","Parus major","Europe","Paridae"],
-  ["Blue Tit","Blaumeise","Cyanistes caeruleus","Europe","Paridae"],
-  ["Coal Tit","Tannenmeise","Periparus ater","Europe","Paridae"],
-  ["Marsh Tit","Sumpfmeise","Poecile palustris","Europe","Paridae"],
-  ["Crested Tit","Haubenmeise","Lophophanes cristatus","Europe","Paridae"],
-  ["Common Chaffinch","Buchfink","Fringilla coelebs","Europe","Fringillidae"],
-  ["European Greenfinch","Grünfink","Chloris chloris","Europe","Fringillidae"],
-  ["European Goldfinch","Stieglitz","Carduelis carduelis","Europe","Fringillidae"],
-  ["Eurasian Bullfinch","Gimpel","Pyrrhula pyrrhula","Europe","Fringillidae"],
-  ["Eurasian Siskin","Erlenzeisig","Spinus spinus","Europe","Fringillidae"],
-  ["Yellowhammer","Goldammer","Emberiza citrinella","Europe","Emberizidae"],
-  ["Reed Bunting","Rohrammer","Emberiza schoeniclus","Europe","Emberizidae"],
-  ["Eurasian Blackcap","Mönchsgrasmücke","Sylvia atricapilla","Europe","Sylviidae"],
-  ["Garden Warbler","Gartengrasmücke","Sylvia borin","Europe","Sylviidae"],
-  ["Common Whitethroat","Dorngrasmücke","Curruca communis","Europe","Sylviidae"],
-  ["Common Chiffchaff","Zilpzalp","Phylloscopus collybita","Europe","Phylloscopidae"],
-  ["Willow Warbler","Fitis","Phylloscopus trochilus","Europe","Phylloscopidae"],
-  ["Wood Warbler","Waldlaubsänger","Phylloscopus sibilatrix","Europe","Phylloscopidae"],
-  ["Sedge Warbler","Schilfrohrsänger","Acrocephalus schoenobaenus","Europe","Acrocephalidae"],
-  ["Eurasian Reed Warbler","Teichrohrsänger","Acrocephalus scirpaceus","Europe","Acrocephalidae"],
-  ["Eurasian Wren","Zaunkönig","Troglodytes troglodytes","Europe","Troglodytidae"],
-  ["Eurasian Nuthatch","Kleiber","Sitta europaea","Europe","Sittidae"],
-  ["Short-toed Treecreeper","Gartenbaumläufer","Certhia brachydactyla","Europe","Certhiidae"],
-  ["Eurasian Treecreeper","Waldbaumläufer","Certhia familiaris","Europe","Certhiidae"],
-  ["Eurasian Skylark","Feldlerche","Alauda arvensis","Europe","Alaudidae"],
-  ["Woodlark","Heidelerche","Lullula arborea","Europe","Alaudidae"],
-  ["Common Cuckoo","Kuckuck","Cuculus canorus","Europe","Cuculidae"],
-  ["Northern Lapwing","Kiebitz","Vanellus vanellus","Europe","Charadriidae"],
-  ["Common Sandpiper","Flussuferläufer","Actitis hypoleucos","Europe","Scolopacidae"],
-  ["Common Snipe","Bekassine","Gallinago gallinago","Europe","Scolopacidae"],
-  ["Eurasian Curlew","Großer Brachvogel","Numenius arquata","Europe","Scolopacidae"],
-  ["Common Redshank","Rotschenkel","Tringa totanus","Europe","Scolopacidae"],
-  ["Common Kestrel","Turmfalke","Falco tinnunculus","Europe","Falconidae"],
-  ["Eurasian Hobby","Baumfalke","Falco subbuteo","Europe","Falconidae"],
-  ["Peregrine Falcon","Wanderfalke","Falco peregrinus","Europe","Falconidae"],
-  ["Common Buzzard","Mäusebussard","Buteo buteo","Europe","Accipitridae"],
-  ["European Honey Buzzard","Wespenbussard","Pernis apivorus","Europe","Accipitridae"],
-  ["Rough-legged Buzzard","Raufußbussard","Buteo lagopus","Europe","Accipitridae"],
-
-  // ---------- NORTH AMERICA ----------
-  ["American Robin","","Turdus migratorius","North America","Turdidae"],
-  ["Wood Thrush","","Hylocichla mustelina","North America","Turdidae"],
-  ["Eastern Bluebird","","Sialia sialis","North America","Turdidae"],
-  ["Hermit Thrush","","Catharus guttatus","North America","Turdidae"],
-  ["Northern Cardinal","","Cardinalis cardinalis","North America","Cardinalidae"],
-  ["Rose-breasted Grosbeak","","Pheucticus ludovicianus","North America","Cardinalidae"],
-  ["Indigo Bunting","","Passerina cyanea","North America","Cardinalidae"],
-  ["Blue Jay","","Cyanocitta cristata","North America","Corvidae"],
-  ["American Crow","","Corvus brachyrhynchos","North America","Corvidae"],
-  ["Black-capped Chickadee","","Poecile atricapillus","North America","Paridae"],
-  ["Tufted Titmouse","","Baeolophus bicolor","North America","Paridae"],
-  ["Song Sparrow","","Melospiza melodia","North America","Passerellidae"],
-  ["White-throated Sparrow","","Zonotrichia albicollis","North America","Passerellidae"],
-  ["Chipping Sparrow","","Spizella passerina","North America","Passerellidae"],
-  ["Eastern Towhee","","Pipilo erythrophthalmus","North America","Passerellidae"],
-  ["Dark-eyed Junco","","Junco hyemalis","North America","Passerellidae"],
-  ["Red-winged Blackbird","","Agelaius phoeniceus","North America","Icteridae"],
-  ["Baltimore Oriole","","Icterus galbula","North America","Icteridae"],
-  ["Common Grackle","","Quiscalus quiscula","North America","Icteridae"],
-  ["American Goldfinch","","Spinus tristis","North America","Fringillidae"],
-  ["House Finch","","Haemorhous mexicanus","North America","Fringillidae"],
-  ["Yellow Warbler","","Setophaga petechia","North America","Parulidae"],
-  ["Common Yellowthroat","","Geothlypis trichas","North America","Parulidae"],
-  ["American Redstart","","Setophaga ruticilla","North America","Parulidae"],
-  ["Northern Mockingbird","","Mimus polyglottos","North America","Mimidae"],
-  ["Gray Catbird","","Dumetella carolinensis","North America","Mimidae"],
-  ["Carolina Wren","","Thryothorus ludovicianus","North America","Troglodytidae"],
-  ["House Wren","","Troglodytes aedon","North America","Troglodytidae"],
-  ["White-breasted Nuthatch","","Sitta carolinensis","North America","Sittidae"],
-  ["Downy Woodpecker","","Dryobates pubescens","North America","Picidae"],
-  ["Northern Flicker","","Colaptes auratus","North America","Picidae"],
-  ["Red-bellied Woodpecker","","Melanerpes carolinus","North America","Picidae"],
-  ["Mourning Dove","","Zenaida macroura","North America","Columbidae"],
-  ["Great Horned Owl","","Bubo virginianus","North America","Strigidae"],
-  ["Barred Owl","","Strix varia","North America","Strigidae"],
-  ["Red-tailed Hawk","","Buteo jamaicensis","North America","Accipitridae"],
-  ["American Kestrel","","Falco sparverius","North America","Falconidae"],
-  ["Killdeer","","Charadrius vociferus","North America","Charadriidae"],
-  ["Cedar Waxwing","","Bombycilla cedrorum","North America","Bombycillidae"],
-  ["Eastern Phoebe","","Sayornis phoebe","North America","Tyrannidae"],
-  ["Great Crested Flycatcher","","Myiarchus crinitus","North America","Tyrannidae"],
-
-  // ---------- ASIA ----------
-  ["Oriental Magpie-Robin","","Copsychus saularis","Asia","Muscicapidae"],
-  ["Daurian Redstart","","Phoenicurus auroreus","Asia","Muscicapidae"],
-  ["Siberian Rubythroat","","Calliope calliope","Asia","Muscicapidae"],
-  ["Common Myna","","Acridotheres tristis","Asia","Sturnidae"],
-  ["Red-whiskered Bulbul","","Pycnonotus jocosus","Asia","Pycnonotidae"],
-  ["Light-vented Bulbul","","Pycnonotus sinensis","Asia","Pycnonotidae"],
-  ["Brown-eared Bulbul","","Hypsipetes amaurotis","Asia","Pycnonotidae"],
-  ["Japanese Tit","","Parus minor","Asia","Paridae"],
-  ["Asian Koel","","Eudynamys scolopaceus","Asia","Cuculidae"],
-  ["Common Tailorbird","","Orthotomus sutorius","Asia","Cisticolidae"],
-  ["Black Drongo","","Dicrurus macrocercus","Asia","Dicruridae"],
-  ["Long-tailed Shrike","","Lanius schach","Asia","Laniidae"],
-  ["Spotted Dove","","Spilopelia chinensis","Asia","Columbidae"],
-  ["Oriental Turtle Dove","","Streptopelia orientalis","Asia","Columbidae"],
-  ["Warbling White-eye","","Zosterops japonicus","Asia","Zosteropidae"],
-  ["Large-billed Crow","","Corvus macrorhynchos","Asia","Corvidae"],
-  ["Eurasian Tree Sparrow","","Passer montanus","Asia","Passeridae"],
-  ["White Wagtail","","Motacilla alba","Asia","Motacillidae"],
-  ["Vinous-throated Parrotbill","","Sinosuthora webbiana","Asia","Paradoxornithidae"],
-  ["Japanese Bush Warbler","","Horornis diphone","Asia","Cettiidae"],
-  ["Grey-headed Woodpecker","","Picus canus","Asia","Picidae"],
-  ["Common Kingfisher","","Alcedo atthis","Asia","Alcedinidae"],
-  ["Red Junglefowl","","Gallus gallus","Asia","Phasianidae"],
-  ["Indian Peafowl","","Pavo cristatus","Asia","Phasianidae"],
-
-  // ---------- AFRICA ----------
-  ["Common Bulbul","","Pycnonotus barbatus","Africa","Pycnonotidae"],
-  ["Dark-capped Bulbul","","Pycnonotus tricolor","Africa","Pycnonotidae"],
-  ["Superb Starling","","Lamprotornis superbus","Africa","Sturnidae"],
-  ["Hadada Ibis","","Bostrychia hagedash","Africa","Threskiornithidae"],
-  ["Augur Buzzard","","Buteo augur","Africa","Accipitridae"],
-  ["White-browed Robin-Chat","","Cossypha heuglini","Africa","Muscicapidae"],
-  ["African Stonechat","","Saxicola torquatus","Africa","Muscicapidae"],
-  ["Laughing Dove","","Spilopelia senegalensis","Africa","Columbidae"],
-  ["Red-eyed Dove","","Streptopelia semitorquata","Africa","Columbidae"],
-  ["Fork-tailed Drongo","","Dicrurus adsimilis","Africa","Dicruridae"],
-  ["Grey Go-away-bird","","Corythaixoides concolor","Africa","Musophagidae"],
-  ["Hamerkop","","Scopus umbretta","Africa","Scopidae"],
-  ["Speckled Mousebird","","Colius striatus","Africa","Coliidae"],
-  ["African Grey Hornbill","","Lophoceros nasutus","Africa","Bucerotidae"],
-  ["Pied Crow","","Corvus albus","Africa","Corvidae"],
-  ["Southern Masked Weaver","","Ploceus velatus","Africa","Ploceidae"],
-  ["Cape Sparrow","","Passer melanurus","Africa","Passeridae"],
-  ["Bronze Mannikin","","Spermestes cucullata","Africa","Estrildidae"],
-  ["Crowned Lapwing","","Vanellus coronatus","Africa","Charadriidae"],
-  ["Blacksmith Lapwing","","Vanellus armatus","Africa","Charadriidae"],
-  ["Helmeted Guineafowl","","Numida meleagris","Africa","Numididae"],
-  ["Tawny-flanked Prinia","","Prinia subflava","Africa","Cisticolidae"],
-
-  // ---------- SOUTH AMERICA ----------
-  ["Rufous-collared Sparrow","","Zonotrichia capensis","South America","Passerellidae"],
-  ["Great Kiskadee","","Pitangus sulphuratus","South America","Tyrannidae"],
-  ["Tropical Kingbird","","Tyrannus melancholicus","South America","Tyrannidae"],
-  ["Fork-tailed Flycatcher","","Tyrannus savana","South America","Tyrannidae"],
-  ["Vermilion Flycatcher","","Pyrocephalus rubinus","South America","Tyrannidae"],
-  ["Southern Lapwing","","Vanellus chilensis","South America","Charadriidae"],
-  ["Rufous Hornero","","Furnarius rufus","South America","Furnariidae"],
-  ["House Wren","","Troglodytes aedon","South America","Troglodytidae"],
-  ["Sayaca Tanager","","Thraupis sayaca","South America","Thraupidae"],
-  ["Saffron Finch","","Sicalis flaveola","South America","Thraupidae"],
-  ["Bananaquit","","Coereba flaveola","South America","Thraupidae"],
-  ["Chalk-browed Mockingbird","","Mimus saturninus","South America","Mimidae"],
-  ["Blue-and-yellow Macaw","","Ara ararauna","South America","Psittacidae"],
-  ["Kelp Gull","","Larus dominicanus","South America","Laridae"],
-  ["Eared Dove","","Zenaida auriculata","South America","Columbidae"],
-  ["Picazuro Pigeon","","Patagioenas picazuro","South America","Columbidae"],
-  ["Pale-breasted Thrush","","Turdus leucomelas","South America","Turdidae"],
-  ["Rufous-bellied Thrush","","Turdus rufiventris","South America","Turdidae"],
-  ["Green-barred Woodpecker","","Colaptes melanochloros","South America","Picidae"],
-  ["Guira Cuckoo","","Guira guira","South America","Cuculidae"],
-  ["Smooth-billed Ani","","Crotophaga ani","South America","Cuculidae"],
-  ["Chimango Caracara","","Milvago chimango","South America","Falconidae"],
-  ["Southern Crested Caracara","","Caracara plancus","South America","Falconidae"],
-
-  // ---------- AUSTRALASIA ----------
-  ["Australian Magpie","","Gymnorhina tibicen","Australasia","Artamidae"],
-  ["Pied Currawong","","Strepera graculina","Australasia","Artamidae"],
-  ["Grey Butcherbird","","Cracticus torquatus","Australasia","Artamidae"],
-  ["Laughing Kookaburra","","Dacelo novaeguineae","Australasia","Alcedinidae"],
-  ["Willie Wagtail","","Rhipidura leucophrys","Australasia","Rhipiduridae"],
-  ["Grey Fantail","","Rhipidura albiscapa","Australasia","Rhipiduridae"],
-  ["Rainbow Lorikeet","","Trichoglossus moluccanus","Australasia","Psittaculidae"],
-  ["Crimson Rosella","","Platycercus elegans","Australasia","Psittaculidae"],
-  ["Australian King-Parrot","","Alisterus scapularis","Australasia","Psittaculidae"],
-  ["Galah","","Eolophus roseicapilla","Australasia","Cacatuidae"],
-  ["Sulphur-crested Cockatoo","","Cacatua galerita","Australasia","Cacatuidae"],
-  ["Superb Fairywren","","Malurus cyaneus","Australasia","Maluridae"],
-  ["Magpie-lark","","Grallina cyanoleuca","Australasia","Monarchidae"],
-  ["Noisy Miner","","Manorina melanocephala","Australasia","Meliphagidae"],
-  ["New Holland Honeyeater","","Phylidonyris novaehollandiae","Australasia","Meliphagidae"],
-  ["Australian Raven","","Corvus coronoides","Australasia","Corvidae"],
-  ["Silvereye","","Zosterops lateralis","Australasia","Zosteropidae"],
-  ["Masked Lapwing","","Vanellus miles","Australasia","Charadriidae"],
-  ["Welcome Swallow","","Hirundo neoxena","Australasia","Hirundinidae"],
-  ["Tawny Frogmouth","","Podargus strigoides","Australasia","Podargidae"],
+  ["Greylag Goose","","Anser anser","Europe","Anatidae"],
+  ["Greater White-fronted Goose","","Anser albifrons","Europe","Anatidae"],
+  ["Barnacle Goose","","Branta leucopsis","Europe","Anatidae"],
+  ["Brant Goose","","Branta bernicla","Europe","Anatidae"],
+  ["Mute Swan","","Cygnus olor","Europe","Anatidae"],
+  ["Whooper Swan","","Cygnus cygnus","Europe","Anatidae"],
+  ["Common Shelduck","","Tadorna tadorna","Europe","Anatidae"],
+  ["Eurasian Wigeon","","Mareca penelope","Europe","Anatidae"],
+  ["Gadwall","","Mareca strepera","Europe","Anatidae"],
+  ["Mallard","","Anas platyrhynchos","Europe","Anatidae"],
+  ["Northern Pintail","","Anas acuta","Europe","Anatidae"],
+  ["Eurasian Teal","","Anas crecca","Europe","Anatidae"],
+  ["Garganey","","Spatula querquedula","Europe","Anatidae"],
+  ["Northern Shoveler","","Spatula clypeata","Europe","Anatidae"],
+  ["Common Pochard","","Aythya ferina","Europe","Anatidae"],
+  ["Tufted Duck","","Aythya fuligula","Europe","Anatidae"],
+  ["Common Eider","","Somateria mollissima","Europe","Anatidae"],
+  ["Common Goldeneye","","Bucephala clangula","Europe","Anatidae"],
+  ["Common Merganser","","Mergus merganser","Europe","Anatidae"],
+  ["Red-breasted Merganser","","Mergus serrator","Europe","Anatidae"],
+  ["Ring-necked Pheasant","","Phasianus colchicus","Europe","Phasianidae"],
+  ["Grey Partridge","","Perdix perdix","Europe","Phasianidae"],
+  ["Common Quail","","Coturnix coturnix","Europe","Phasianidae"],
+  ["Red-legged Partridge","","Alectoris rufa","Europe","Phasianidae"],
+  ["Western Capercaillie","","Tetrao urogallus","Europe","Phasianidae"],
+  ["Black Grouse","","Lyrurus tetrix","Europe","Phasianidae"],
+  ["Rock Ptarmigan","","Lagopus muta","Europe","Phasianidae"],
+  ["Hazel Grouse","","Tetrastes bonasia","Europe","Phasianidae"],
+  ["Little Grebe","","Tachybaptus ruficollis","Europe","Podicipedidae"],
+  ["Great Crested Grebe","","Podiceps cristatus","Europe","Podicipedidae"],
+  ["Rock Pigeon","","Columba livia","Europe","Columbidae"],
+  ["Stock Dove","","Columba oenas","Europe","Columbidae"],
+  ["Common Wood-Pigeon","","Columba palumbus","Europe","Columbidae"],
+  ["European Turtle-Dove","","Streptopelia turtur","Europe","Columbidae"],
+  ["Eurasian Collared-Dove","","Streptopelia decaocto","Europe","Columbidae"],
+  ["Common Cuckoo","","Cuculus canorus","Europe","Cuculidae"],
+  ["Great Spotted Cuckoo","","Clamator glandarius","Europe","Cuculidae"],
+  ["Common Swift","","Apus apus","Europe","Apodidae"],
+  ["Alpine Swift","","Tachymarptis melba","Europe","Apodidae"],
+  ["Pallid Swift","","Apus pallidus","Europe","Apodidae"],
+  ["Eurasian Nightjar","","Caprimulgus europaeus","Europe","Caprimulgidae"],
+  ["Water Rail","","Rallus aquaticus","Europe","Rallidae"],
+  ["Corn Crake","","Crex crex","Europe","Rallidae"],
+  ["Spotted Crake","","Porzana porzana","Europe","Rallidae"],
+  ["Eurasian Moorhen","","Gallinula chloropus","Europe","Rallidae"],
+  ["Eurasian Coot","","Fulica atra","Europe","Rallidae"],
+  ["Common Crane","","Grus grus","Europe","Gruidae"],
+  ["Great Bustard","","Otis tarda","Europe","Otididae"],
+  ["Little Bustard","","Tetrax tetrax","Europe","Otididae"],
+  ["Eurasian Oystercatcher","","Haematopus ostralegus","Europe","Haematopodidae"],
+  ["Black-winged Stilt","","Himantopus himantopus","Europe","Recurvirostridae"],
+  ["Pied Avocet","","Recurvirostra avosetta","Europe","Recurvirostridae"],
+  ["Eurasian Thick-knee","","Burhinus oedicnemus","Europe","Burhinidae"],
+  ["European Golden-Plover","","Pluvialis apricaria","Europe","Charadriidae"],
+  ["Grey Plover","","Pluvialis squatarola","Europe","Charadriidae"],
+  ["Common Ringed Plover","","Charadrius hiaticula","Europe","Charadriidae"],
+  ["Little Ringed Plover","","Charadrius dubius","Europe","Charadriidae"],
+  ["Kentish Plover","","Charadrius alexandrinus","Europe","Charadriidae"],
+  ["Northern Lapwing","","Vanellus vanellus","Europe","Charadriidae"],
+  ["Eurasian Curlew","","Numenius arquata","Europe","Scolopacidae"],
+  ["Whimbrel","","Numenius phaeopus","Europe","Scolopacidae"],
+  ["Black-tailed Godwit","","Limosa limosa","Europe","Scolopacidae"],
+  ["Bar-tailed Godwit","","Limosa lapponica","Europe","Scolopacidae"],
+  ["Eurasian Woodcock","","Scolopax rusticola","Europe","Scolopacidae"],
+  ["Common Snipe","","Gallinago gallinago","Europe","Scolopacidae"],
+  ["Jack Snipe","","Lymnocryptes minimus","Europe","Scolopacidae"],
+  ["Common Sandpiper","","Actitis hypoleucos","Europe","Scolopacidae"],
+  ["Green Sandpiper","","Tringa ochropus","Europe","Scolopacidae"],
+  ["Wood Sandpiper","","Tringa glareola","Europe","Scolopacidae"],
+  ["Common Redshank","","Tringa totanus","Europe","Scolopacidae"],
+  ["Spotted Redshank","","Tringa erythropus","Europe","Scolopacidae"],
+  ["Common Greenshank","","Tringa nebularia","Europe","Scolopacidae"],
+  ["Ruff","","Calidris pugnax","Europe","Scolopacidae"],
+  ["Dunlin","","Calidris alpina","Europe","Scolopacidae"],
+  ["Sanderling","","Calidris alba","Europe","Scolopacidae"],
+  ["Red Knot","","Calidris canutus","Europe","Scolopacidae"],
+  ["Little Stint","","Calidris minuta","Europe","Scolopacidae"],
+  ["Common Tern","","Sterna hirundo","Europe","Laridae"],
+  ["Arctic Tern","","Sterna paradisaea","Europe","Laridae"],
+  ["Little Tern","","Sternula albifrons","Europe","Laridae"],
+  ["Sandwich Tern","","Thalasseus sandvicensis","Europe","Laridae"],
+  ["Black Tern","","Chlidonias niger","Europe","Laridae"],
+  ["Black-headed Gull","","Chroicocephalus ridibundus","Europe","Laridae"],
+  ["Mediterranean Gull","","Ichthyaetus melanocephalus","Europe","Laridae"],
+  ["Common Gull","","Larus canus","Europe","Laridae"],
+  ["European Herring Gull","","Larus argentatus","Europe","Laridae"],
+  ["Yellow-legged Gull","","Larus michahellis","Europe","Laridae"],
+  ["Lesser Black-backed Gull","","Larus fuscus","Europe","Laridae"],
+  ["Great Black-backed Gull","","Larus marinus","Europe","Laridae"],
+  ["Black-legged Kittiwake","","Rissa tridactyla","Europe","Laridae"],
+  ["Atlantic Puffin","","Fratercula arctica","Europe","Alcidae"],
+  ["Razorbill","","Alca torda","Europe","Alcidae"],
+  ["Common Murre","","Uria aalge","Europe","Alcidae"],
+  ["Black Guillemot","","Cepphus grylle","Europe","Alcidae"],
+  ["Red-throated Loon","","Gavia stellata","Europe","Gaviidae"],
+  ["Black-throated Loon","","Gavia arctica","Europe","Gaviidae"],
+  ["Northern Fulmar","","Fulmarus glacialis","Europe","Procellariidae"],
+  ["Manx Shearwater","","Puffinus puffinus","Europe","Procellariidae"],
+  ["European Storm-Petrel","","Hydrobates pelagicus","Europe","Hydrobatidae"],
+  ["Northern Gannet","","Morus bassanus","Europe","Sulidae"],
+  ["Great Cormorant","","Phalacrocorax carbo","Europe","Phalacrocoracidae"],
+  ["European Shag","","Gulosus aristotelis","Europe","Phalacrocoracidae"],
+  ["White Stork","","Ciconia ciconia","Europe","Ciconiidae"],
+  ["Black Stork","","Ciconia nigra","Europe","Ciconiidae"],
+  ["Glossy Ibis","","Plegadis falcinellus","Europe","Threskiornithidae"],
+  ["Eurasian Spoonbill","","Platalea leucorodia","Europe","Threskiornithidae"],
+  ["Eurasian Bittern","","Botaurus stellaris","Europe","Ardeidae"],
+  ["Little Bittern","","Ixobrychus minutus","Europe","Ardeidae"],
+  ["Black-crowned Night Heron","","Nycticorax nycticorax","Europe","Ardeidae"],
+  ["Squacco Heron","","Ardeola ralloides","Europe","Ardeidae"],
+  ["Western Cattle Egret","","Bubulcus ibis","Europe","Ardeidae"],
+  ["Little Egret","","Egretta garzetta","Europe","Ardeidae"],
+  ["Great Egret","","Ardea alba","Europe","Ardeidae"],
+  ["Grey Heron","","Ardea cinerea","Europe","Ardeidae"],
+  ["Purple Heron","","Ardea purpurea","Europe","Ardeidae"],
+  ["Osprey","","Pandion haliaetus","Europe","Pandionidae"],
+  ["European Honey-buzzard","","Pernis apivorus","Europe","Accipitridae"],
+  ["Black Kite","","Milvus migrans","Europe","Accipitridae"],
+  ["Red Kite","","Milvus milvus","Europe","Accipitridae"],
+  ["White-tailed Eagle","","Haliaeetus albicilla","Europe","Accipitridae"],
+  ["Griffon Vulture","","Gyps fulvus","Europe","Accipitridae"],
+  ["Bearded Vulture","","Gypaetus barbatus","Europe","Accipitridae"],
+  ["Egyptian Vulture","","Neophron percnopterus","Europe","Accipitridae"],
+  ["Short-toed Snake-Eagle","","Circaetus gallicus","Europe","Accipitridae"],
+  ["Western Marsh Harrier","","Circus aeruginosus","Europe","Accipitridae"],
+  ["Hen Harrier","","Circus cyaneus","Europe","Accipitridae"],
+  ["Montagu's Harrier","","Circus pygargus","Europe","Accipitridae"],
+  ["Eurasian Sparrowhawk","","Accipiter nisus","Europe","Accipitridae"],
+  ["Northern Goshawk","","Accipiter gentilis","Europe","Accipitridae"],
+  ["Common Buzzard","","Buteo buteo","Europe","Accipitridae"],
+  ["Rough-legged Buzzard","","Buteo lagopus","Europe","Accipitridae"],
+  ["Golden Eagle","","Aquila chrysaetos","Europe","Accipitridae"],
+  ["Booted Eagle","","Hieraaetus pennatus","Europe","Accipitridae"],
+  ["Common Kestrel","","Falco tinnunculus","Europe","Falconidae"],
+  ["Lesser Kestrel","","Falco naumanni","Europe","Falconidae"],
+  ["Merlin","","Falco columbarius","Europe","Falconidae"],
+  ["Eurasian Hobby","","Falco subbuteo","Europe","Falconidae"],
+  ["Peregrine Falcon","","Falco peregrinus","Europe","Falconidae"],
+  ["Red-footed Falcon","","Falco vespertinus","Europe","Falconidae"],
+  ["Western Barn Owl","","Tyto alba","Europe","Tytonidae"],
+  ["Eurasian Scops-Owl","","Otus scops","Europe","Strigidae"],
+  ["Eurasian Eagle-Owl","","Bubo bubo","Europe","Strigidae"],
+  ["Little Owl","","Athene noctua","Europe","Strigidae"],
+  ["Tawny Owl","","Strix aluco","Europe","Strigidae"],
+  ["Ural Owl","","Strix uralensis","Europe","Strigidae"],
+  ["Long-eared Owl","","Asio otus","Europe","Strigidae"],
+  ["Short-eared Owl","","Asio flammeus","Europe","Strigidae"],
+  ["Boreal Owl","","Aegolius funereus","Europe","Strigidae"],
+  ["Eurasian Pygmy-Owl","","Glaucidium passerinum","Europe","Strigidae"],
+  ["Eurasian Hoopoe","","Upupa epops","Europe","Upupidae"],
+  ["European Roller","","Coracias garrulus","Europe","Coraciidae"],
+  ["European Bee-eater","","Merops apiaster","Europe","Meropidae"],
+  ["Common Kingfisher","","Alcedo atthis","Europe","Alcedinidae"],
+  ["Eurasian Wryneck","","Jynx torquilla","Europe","Picidae"],
+  ["European Green Woodpecker","","Picus viridis","Europe","Picidae"],
+  ["Grey-headed Woodpecker","","Picus canus","Europe","Picidae"],
+  ["Black Woodpecker","","Dryocopus martius","Europe","Picidae"],
+  ["Great Spotted Woodpecker","","Dendrocopos major","Europe","Picidae"],
+  ["Middle Spotted Woodpecker","","Dendrocoptes medius","Europe","Picidae"],
+  ["Lesser Spotted Woodpecker","","Dryobates minor","Europe","Picidae"],
+  ["White-backed Woodpecker","","Dendrocopos leucotos","Europe","Picidae"],
+  ["Eurasian Three-toed Woodpecker","","Picoides tridactylus","Europe","Picidae"],
+  ["Eurasian Golden Oriole","","Oriolus oriolus","Europe","Oriolidae"],
+  ["Red-backed Shrike","","Lanius collurio","Europe","Laniidae"],
+  ["Great Grey Shrike","","Lanius excubitor","Europe","Laniidae"],
+  ["Lesser Grey Shrike","","Lanius minor","Europe","Laniidae"],
+  ["Woodchat Shrike","","Lanius senator","Europe","Laniidae"],
+  ["Eurasian Jay","","Garrulus glandarius","Europe","Corvidae"],
+  ["Eurasian Magpie","","Pica pica","Europe","Corvidae"],
+  ["Spotted Nutcracker","","Nucifraga caryocatactes","Europe","Corvidae"],
+  ["Red-billed Chough","","Pyrrhocorax pyrrhocorax","Europe","Corvidae"],
+  ["Western Jackdaw","","Coloeus monedula","Europe","Corvidae"],
+  ["Rook","","Corvus frugilegus","Europe","Corvidae"],
+  ["Carrion Crow","","Corvus corone","Europe","Corvidae"],
+  ["Hooded Crow","","Corvus cornix","Europe","Corvidae"],
+  ["Northern Raven","","Corvus corax","Europe","Corvidae"],
+  ["Coal Tit","","Periparus ater","Europe","Paridae"],
+  ["Marsh Tit","","Poecile palustris","Europe","Paridae"],
+  ["Willow Tit","","Poecile montanus","Europe","Paridae"],
+  ["Crested Tit","","Lophophanes cristatus","Europe","Paridae"],
+  ["Eurasian Blue Tit","","Cyanistes caeruleus","Europe","Paridae"],
+  ["Great Tit","","Parus major","Europe","Paridae"],
+  ["Bearded Reedling","","Panurus biarmicus","Europe","Panuridae"],
+  ["Eurasian Penduline-Tit","","Remiz pendulinus","Europe","Remizidae"],
+  ["Woodlark","","Lullula arborea","Europe","Alaudidae"],
+  ["Eurasian Skylark","","Alauda arvensis","Europe","Alaudidae"],
+  ["Crested Lark","","Galerida cristata","Europe","Alaudidae"],
+  ["Greater Short-toed Lark","","Calandrella brachydactyla","Europe","Alaudidae"],
+  ["Calandra Lark","","Melanocorypha calandra","Europe","Alaudidae"],
+  ["Sand Martin","","Riparia riparia","Europe","Hirundinidae"],
+  ["Barn Swallow","","Hirundo rustica","Europe","Hirundinidae"],
+  ["Common House-Martin","","Delichon urbicum","Europe","Hirundinidae"],
+  ["Eurasian Crag-Martin","","Ptyonoprogne rupestris","Europe","Hirundinidae"],
+  ["Red-rumped Swallow","","Cecropis daurica","Europe","Hirundinidae"],
+  ["Long-tailed Tit","","Aegithalos caudatus","Europe","Aegithalidae"],
+  ["Willow Warbler","","Phylloscopus trochilus","Europe","Phylloscopidae"],
+  ["Common Chiffchaff","","Phylloscopus collybita","Europe","Phylloscopidae"],
+  ["Wood Warbler","","Phylloscopus sibilatrix","Europe","Phylloscopidae"],
+  ["Western Bonelli's Warbler","","Phylloscopus bonelli","Europe","Phylloscopidae"],
+  ["Sedge Warbler","","Acrocephalus schoenobaenus","Europe","Acrocephalidae"],
+  ["Eurasian Reed Warbler","","Acrocephalus scirpaceus","Europe","Acrocephalidae"],
+  ["Great Reed Warbler","","Acrocephalus arundinaceus","Europe","Acrocephalidae"],
+  ["Marsh Warbler","","Acrocephalus palustris","Europe","Acrocephalidae"],
+  ["Melodious Warbler","","Hippolais polyglotta","Europe","Acrocephalidae"],
+  ["Icterine Warbler","","Hippolais icterina","Europe","Acrocephalidae"],
+  ["Common Grasshopper Warbler","","Locustella naevia","Europe","Locustellidae"],
+  ["Savi's Warbler","","Locustella luscinioides","Europe","Locustellidae"],
+  ["Zitting Cisticola","","Cisticola juncidis","Europe","Cisticolidae"],
+  ["Eurasian Blackcap","","Sylvia atricapilla","Europe","Sylviidae"],
+  ["Garden Warbler","","Sylvia borin","Europe","Sylviidae"],
+  ["Lesser Whitethroat","","Curruca curruca","Europe","Sylviidae"],
+  ["Common Whitethroat","","Curruca communis","Europe","Sylviidae"],
+  ["Dartford Warbler","","Curruca undata","Europe","Sylviidae"],
+  ["Sardinian Warbler","","Curruca melanocephala","Europe","Sylviidae"],
+  ["Subalpine Warbler","","Curruca cantillans","Europe","Sylviidae"],
+  ["Goldcrest","","Regulus regulus","Europe","Regulidae"],
+  ["Common Firecrest","","Regulus ignicapilla","Europe","Regulidae"],
+  ["Eurasian Wren","","Troglodytes troglodytes","Europe","Troglodytidae"],
+  ["Eurasian Nuthatch","","Sitta europaea","Europe","Sittidae"],
+  ["Wallcreeper","","Tichodroma muraria","Europe","Tichodromidae"],
+  ["Eurasian Treecreeper","","Certhia familiaris","Europe","Certhiidae"],
+  ["Short-toed Treecreeper","","Certhia brachydactyla","Europe","Certhiidae"],
+  ["Common Starling","","Sturnus vulgaris","Europe","Sturnidae"],
+  ["Spotless Starling","","Sturnus unicolor","Europe","Sturnidae"],
+  ["White-throated Dipper","","Cinclus cinclus","Europe","Cinclidae"],
+  ["Ring Ouzel","","Turdus torquatus","Europe","Turdidae"],
+  ["Common Blackbird","","Turdus merula","Europe","Turdidae"],
+  ["Fieldfare","","Turdus pilaris","Europe","Turdidae"],
+  ["Song Thrush","","Turdus philomelos","Europe","Turdidae"],
+  ["Redwing","","Turdus iliacus","Europe","Turdidae"],
+  ["Mistle Thrush","","Turdus viscivorus","Europe","Turdidae"],
+  ["European Robin","","Erithacus rubecula","Europe","Muscicapidae"],
+  ["Thrush Nightingale","","Luscinia luscinia","Europe","Muscicapidae"],
+  ["Common Nightingale","","Luscinia megarhynchos","Europe","Muscicapidae"],
+  ["Bluethroat","","Luscinia svecica","Europe","Muscicapidae"],
+  ["Black Redstart","","Phoenicurus ochruros","Europe","Muscicapidae"],
+  ["Common Redstart","","Phoenicurus phoenicurus","Europe","Muscicapidae"],
+  ["Whinchat","","Saxicola rubetra","Europe","Muscicapidae"],
+  ["European Stonechat","","Saxicola rubicola","Europe","Muscicapidae"],
+  ["Northern Wheatear","","Oenanthe oenanthe","Europe","Muscicapidae"],
+  ["Black-eared Wheatear","","Oenanthe hispanica","Europe","Muscicapidae"],
+  ["Spotted Flycatcher","","Muscicapa striata","Europe","Muscicapidae"],
+  ["European Pied Flycatcher","","Ficedula hypoleuca","Europe","Muscicapidae"],
+  ["Collared Flycatcher","","Ficedula albicollis","Europe","Muscicapidae"],
+  ["House Sparrow","","Passer domesticus","Europe","Passeridae"],
+  ["Spanish Sparrow","","Passer hispaniolensis","Europe","Passeridae"],
+  ["Eurasian Tree Sparrow","","Passer montanus","Europe","Passeridae"],
+  ["Rock Sparrow","","Petronia petronia","Europe","Passeridae"],
+  ["Dunnock","","Prunella modularis","Europe","Prunellidae"],
+  ["Alpine Accentor","","Prunella collaris","Europe","Prunellidae"],
+  ["Western Yellow Wagtail","","Motacilla flava","Europe","Motacillidae"],
+  ["Grey Wagtail","","Motacilla cinerea","Europe","Motacillidae"],
+  ["White Wagtail","","Motacilla alba","Europe","Motacillidae"],
+  ["Tawny Pipit","","Anthus campestris","Europe","Motacillidae"],
+  ["Tree Pipit","","Anthus trivialis","Europe","Motacillidae"],
+  ["Meadow Pipit","","Anthus pratensis","Europe","Motacillidae"],
+  ["Water Pipit","","Anthus spinoletta","Europe","Motacillidae"],
+  ["Common Chaffinch","","Fringilla coelebs","Europe","Fringillidae"],
+  ["Brambling","","Fringilla montifringilla","Europe","Fringillidae"],
+  ["European Greenfinch","","Chloris chloris","Europe","Fringillidae"],
+  ["European Goldfinch","","Carduelis carduelis","Europe","Fringillidae"],
+  ["Eurasian Siskin","","Spinus spinus","Europe","Fringillidae"],
+  ["Common Linnet","","Linaria cannabina","Europe","Fringillidae"],
+  ["Twite","","Linaria flavirostris","Europe","Fringillidae"],
+  ["Common Redpoll","","Acanthis flammea","Europe","Fringillidae"],
+  ["Red Crossbill","","Loxia curvirostra","Europe","Fringillidae"],
+  ["Common Rosefinch","","Carpodacus erythrinus","Europe","Fringillidae"],
+  ["Eurasian Bullfinch","","Pyrrhula pyrrhula","Europe","Fringillidae"],
+  ["Hawfinch","","Coccothraustes coccothraustes","Europe","Fringillidae"],
+  ["European Serin","","Serinus serinus","Europe","Fringillidae"],
+  ["Corn Bunting","","Emberiza calandra","Europe","Emberizidae"],
+  ["Yellowhammer","","Emberiza citrinella","Europe","Emberizidae"],
+  ["Cirl Bunting","","Emberiza cirlus","Europe","Emberizidae"],
+  ["Rock Bunting","","Emberiza cia","Europe","Emberizidae"],
+  ["Ortolan Bunting","","Emberiza hortulana","Europe","Emberizidae"],
+  ["Reed Bunting","","Emberiza schoeniclus","Europe","Emberizidae"],
 ];
 const SPECIES = RAW.map((r,i)=>({ id:i, en:r[0], de:r[1], sci:r[2], reg:r[3], fam:r[4],
   xcId:null, rec:null, lic:null, ref:null, hasReal:false }));
 const famLabel = f => FAMILY_LABELS[f] || f;
-
+ 
 /* ---- Answer matching ---- */
 const STRIP=/^(common|eurasian|european|northern|southern|american|australian|african|oriental|greater|lesser)\s+/;
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
@@ -396,13 +453,13 @@ function acceptedNames(s){
   return set;
 }
 const speciesMatches=(typed,s)=>acceptedNames(s).has(norm(typed));
-
+ 
 /* ---- SRS (Leitner), no frequency/season ---- */
 const INTERVAL={0:0,1:1,2:3,3:6,4:12,5:24};
 const POINTS={full:10,half:5,miss:0};
 const state={
   region:"Europe",
-  step:0, score:0, current:null, mediaReal:false,
+  step:0, score:0, current:null, mediaReal:false, recent:[],
   enabled:new Set(),                 // enabled families for current region
   cards:SPECIES.map(s=>({id:s.id,box:0,due:0,seen:false})),
 };
@@ -411,16 +468,10 @@ const inScope=id=>SPECIES[id].reg===state.region && state.enabled.has(SPECIES[id
 const regionFamilies=()=>[...new Set(SPECIES.filter(s=>s.reg===state.region).map(s=>s.fam))]
                           .sort((a,b)=>famLabel(a).localeCompare(famLabel(b)));
 const deck=()=>state.cards.filter(c=>inScope(c.id));
-
+ 
 function pickNext(){
   const d=deck(); if(!d.length) return null;
-  const due=d.filter(c=>c.seen && c.due<=state.step && c.box<5 && c.id!==state.current);
-  if(due.length){ due.sort((a,b)=>a.box-b.box); return due[0].id; }
-  const fresh=d.filter(c=>!c.seen);
-  if(fresh.length) return fresh[Math.floor(Math.random()*fresh.length)].id;
-  const pool=d.filter(c=>c.id!==state.current);
-  const arr=pool.length?pool:d;
-  return arr[Math.floor(Math.random()*arr.length)].id;
+  return d[Math.floor(Math.random()*d.length)].id;   // pure random, repeats allowed
 }
 function schedule(id,outcome){
   const c=card(id); c.seen=true; state.step++;
@@ -431,7 +482,7 @@ function schedule(id,outcome){
   c.due=state.step+iv; state.score+=POINTS[outcome];
   el('score').textContent=state.score;
 }
-
+ 
 /* ---- Audio: live CC recordings via GBIF, synth fallback ---- */
 const XC_DATASET="b1047888-ae52-4179-9dd5-5448ea342a24";
 const recCache=new Map();
@@ -514,14 +565,14 @@ function synth(id){
   setTimeout(()=>{ if(playingSynth){ stopAudio(); setStatus('done'); setPlayIcon(false); } }, notes*230+150);
 }
 function stopAudio(){ playingSynth=false; cancelAnimationFrame(rafId); try{player.pause();}catch(e){} }
-
+ 
 /* ---- Play/pause icon ---- */
 const PLAY_SVG='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
 const PAUSE_SVG='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
 const setPlayIcon=on=>{ el('playBtn').innerHTML=on?PAUSE_SVG:PLAY_SVG; };
 player.addEventListener('play',()=>setPlayIcon(true));
 player.addEventListener('pause',()=>setPlayIcon(false));
-
+ 
 /* ---- Spectrogram ---- */
 const cv=document.getElementById('scope'), cx=cv.getContext('2d');
 cx.fillStyle='#0c1817'; cx.fillRect(0,0,cv.width,cv.height);
@@ -544,10 +595,10 @@ function animateStylised(id){
 player.addEventListener('ended',()=>{ cancelAnimationFrame(rafId); setStatus('done'); setPlayIcon(false); });
 player.addEventListener('error',()=>{ if(state.current!=null && state.mediaReal){ setStatus('clip error — tone'); synth(state.current); }});
 const setStatus=t=>el('scopeStatus').textContent=t;
-
+ 
 /* ---- Rendering ---- */
 const el=id=>document.getElementById(id);
-
+ 
 function renderFilters(){
   const box=el('filters');
   box.querySelectorAll('.chip,.allbtn').forEach(n=>n.remove());
@@ -572,13 +623,13 @@ function renderFamAnswerChips(){
     b.onclick=()=>commit('half',f); box.appendChild(b);
   });
 }
-
+ 
 function renderStudy(){
   const id=state.current;
   el('reveal').className='reveal'; el('reveal').innerHTML='';
   el('feedback').innerHTML=''; el('famchips').className='famchips'; el('nextBtn').disabled=true;
   setPlayIcon(false);
-
+ 
   if(id==null){
     el('studyBody').querySelectorAll('.scope,.playrow,.typerow,.altlinks').forEach(n=>n.style.display='none');
     let e=el('emptyMsg'); if(!e){ e=document.createElement('div'); e.id='emptyMsg'; e.className='empty'; el('studyBody').appendChild(e); }
@@ -590,14 +641,14 @@ function renderStudy(){
   el('studyBody').querySelector('.playrow').style.display='flex';
   el('studyBody').querySelector('.typerow').style.display='flex';
   el('studyBody').querySelector('.altlinks').style.display='flex';
-
+ 
   const s=SPECIES[id];
   el('clipNote').innerHTML = s.hasReal ? '' : `Press play to stream a Creative-Commons recording.`;
   if(s.hasReal) updateClipNote(id);
   const inp=el('typeInput'); inp.value=''; inp.disabled=false; el('checkBtn').disabled=false;
   setTimeout(()=>inp.focus(),0);
 }
-
+ 
 function commit(outcome, chosenFam){
   const id=state.current, s=SPECIES[id];
   let result=outcome;
@@ -605,7 +656,7 @@ function commit(outcome, chosenFam){
   else if(outcome==='half'){ result=(chosenFam===s.fam)?'half':'miss'; }
   schedule(id,result);
   el('typeInput').disabled=true; el('checkBtn').disabled=true; el('famchips').className='famchips';
-
+ 
   const cls=result==='full'?'full':result==='half'?'half':'miss';
   const label=`+${POINTS[result]}`;
   el('reveal').className='reveal show';
@@ -620,10 +671,10 @@ function commit(outcome, chosenFam){
   else fb.innerHTML=`<span class="no">It was the ${s.en} — ${famLabel(s.fam)}. Back in rotation.</span>`;
   el('nextBtn').disabled=false;
 }
-
+ 
 /* ---- Flow ---- */
 function nextBird(){ state.current=pickNext(); renderStudy(); playClip(state.current); }
-function afterScopeChange(){ renderFilters(); renderFamAnswerChips();
+function afterScopeChange(){ renderFilters(); renderFamAnswerChips(); state.recent=[];
   if(state.current==null || !inScope(state.current)) state.current=pickNext();
   renderStudy();
 }
@@ -634,7 +685,7 @@ el('typeInput').addEventListener('keydown',e=>{ if(e.key==='Enter' && !el('check
 el('famToggle').onclick=()=>el('famchips').classList.toggle('show');
 el('dontKnow').onclick=()=>commit('miss');
 el('region').onchange=e=>{ state.region=e.target.value; state.enabled=new Set(regionFamilies()); state.current=null; afterScopeChange(); };
-
+ 
 /* boot */
 state.region=el('region').value;
 state.enabled=new Set(regionFamilies());
