@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dawn Chorus — learn birds by ear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ground:#0d1b1a; --panel:#132523; --panel2:#183029;
+    --ink:#ece3d0; --muted:#8ba296; --line:#26403a;
+    --amber:#f0b64a; --coral:#e37a5f; --moss:#83b58e;
+    --shadow:0 18px 50px -24px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 78% -10%, #1a302b 0%, transparent 60%),
+      radial-gradient(900px 500px at 0% 110%, #14262c 0%, transparent 55%),
+      var(--ground);
+    color:var(--ink); font-family:"Inter",system-ui,sans-serif; min-height:100vh;
+    line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:28px 22px 60px}
+  a{color:var(--amber)}
+  .mono{font-family:"IBM Plex Mono",monospace}
+
+  header{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+  .brand h1{font-family:"Fraunces",serif;font-weight:500;font-size:32px;line-height:1;margin:0;letter-spacing:-.01em}
+  .brand h1 .dot{color:var(--amber)}
+  .brand p{margin:8px 0 0;color:var(--muted);font-size:13.5px;max-width:44ch}
+  .controls{display:flex;flex-direction:column;gap:8px;align-items:flex-end;min-width:210px}
+  .field{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:7px 11px;width:100%}
+  .field label{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+  .field select{background:transparent;border:0;color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:13px;outline:none;width:100%;text-align:right;cursor:pointer}
+  .field select option{background:var(--panel2);color:var(--ink)}
+  .scorechip{display:flex;align-items:baseline;gap:8px;justify-content:flex-end;width:100%;padding-right:2px}
+  .scorechip .n{font-family:"IBM Plex Mono",monospace;font-size:20px;color:var(--amber)}
+  .scorechip .l{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+
+  .filters{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:0 0 20px;padding:13px 15px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+  .filters .flabel{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-right:4px;width:100%}
+  .chip{border:1px solid var(--line);background:transparent;color:var(--muted);font-family:inherit;font-size:12.5px;font-weight:500;padding:6px 12px;border-radius:20px;cursor:pointer;transition:.12s}
+  .chip:hover{border-color:var(--muted);color:var(--ink)}
+  .chip.on{background:var(--amber);border-color:var(--amber);color:#20140a}
+  .chip.mini{padding:5px 10px;font-size:12px}
+  .filters .allbtn{margin-left:auto;font-size:11px;color:var(--muted);background:none;border:0;cursor:pointer;text-decoration:underline;font-family:inherit}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+  .study{padding:22px}
+
+  .scope{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(180deg,#0b1615,#0e1c1a)}
+  canvas{display:block;width:100%;height:150px}
+  .scope .status{position:absolute;left:14px;bottom:11px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.04em;text-shadow:0 1px 6px #000}
+  .playrow{display:flex;align-items:center;gap:14px;margin-top:16px}
+  .play{width:58px;height:58px;border-radius:50%;flex:0 0 auto;border:1px solid var(--line);background:radial-gradient(120% 120% at 30% 25%,#20372f,#122120);color:var(--amber);cursor:pointer;display:grid;place-items:center;transition:.15s}
+  .play:hover{border-color:var(--amber);transform:translateY(-1px)}
+  .play svg{width:23px;height:23px;fill:currentColor}
+  .attrib{font-size:11.5px;color:var(--muted)}
+  .attrib .lic{color:var(--moss)}
+  .attrib a{text-decoration:none;border-bottom:1px dotted var(--line)}
+
+  .typerow{display:flex;gap:9px;margin-top:20px}
+  .typerow input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-family:inherit;font-size:15px;padding:13px 15px;outline:none}
+  .typerow input:focus{border-color:var(--amber)}
+  .typerow input:disabled{opacity:.6}
+  .checkbtn{border:0;background:var(--amber);color:#20140a;font-family:inherit;font-weight:600;font-size:14px;padding:0 20px;border-radius:12px;cursor:pointer}
+  .checkbtn:disabled{background:var(--panel2);color:var(--muted);cursor:default}
+  .altlinks{display:flex;gap:18px;margin-top:12px;font-size:12.5px;flex-wrap:wrap}
+  .altlinks button{background:none;border:0;color:var(--muted);cursor:pointer;font-family:inherit;font-size:12.5px;padding:0;text-decoration:underline;text-underline-offset:3px}
+  .altlinks button:hover{color:var(--ink)}
+  .altlinks .halfnote{color:var(--amber)}
+
+  .famchips{display:none;flex-wrap:wrap;gap:7px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+  .famchips.show{display:flex}
+  .famchips .hint{width:100%;font-size:11px;color:var(--muted);margin-bottom:2px}
+
+  .reveal{margin-top:18px;display:none}
+  .reveal.show{display:block}
+  .reveal .bird{font-family:"Fraunces",serif;font-size:26px;font-weight:500;line-height:1.1}
+  .reveal .meta{font-size:13px;color:var(--muted);font-style:italic;margin-top:3px}
+  .reveal .grp{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--amber);border:1px solid var(--line);border-radius:20px;padding:3px 9px;margin-top:10px;font-style:normal}
+  .points{font-family:"IBM Plex Mono",monospace;font-size:14px;margin-left:10px}
+  .points.full{color:var(--moss)} .points.half{color:var(--amber)} .points.miss{color:var(--coral)}
+  .feedback{margin-top:14px;min-height:20px;font-size:14px}
+  .feedback .ok{color:var(--moss)} .feedback .no{color:var(--coral)} .feedback .part{color:var(--amber)}
+  .empty{padding:40px 10px;text-align:center;color:var(--muted);font-size:14px}
+  .nextbtn{margin-top:20px}
+  .nextbtn button{width:100%;border:0;background:var(--amber);color:#20140a;font-family:inherit;font-weight:600;font-size:15px;padding:14px;border-radius:12px;cursor:pointer}
+  .nextbtn button:disabled{background:var(--panel2);color:var(--muted);cursor:default}
+
+  footer{margin-top:26px;color:var(--muted);font-size:12px;line-height:1.6;border-top:1px solid var(--line);padding-top:16px}
+  footer code{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11.5px}
+  .tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);border:1px solid var(--line);border-radius:20px;padding:3px 10px;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="tag">Birding by ear</span>
+      <h1>Dawn Chorus<span class="dot">.</span></h1>
+      <p>Hear a song, type the species for full marks or name its family for half.</p>
+    </div>
+    <div class="controls">
+      <div class="field"><label for="region">Region</label>
+        <select id="region">
+          <option value="Europe" selected>Europe</option>
+          <option value="North America">North America</option>
+          <option value="Asia">Asia</option>
+          <option value="Africa">Africa</option>
+          <option value="South America">South America</option>
+          <option value="Australasia">Australasia</option>
+        </select>
+      </div>
+      <div class="scorechip"><span class="n" id="score">0</span><span class="l">points</span></div>
+    </div>
+  </header>
+
+  <div class="filters" id="filters"><span class="flabel">Families</span></div>
+
+  <section class="card study" id="study">
+    <div id="studyBody">
+      <div class="scope">
+        <canvas id="scope" width="900" height="300"></canvas>
+        <div class="status mono" id="scopeStatus">press play</div>
+      </div>
+      <div class="playrow">
+        <button class="play" id="playBtn" aria-label="Play or pause"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <div class="attrib" id="attrib"><span id="clipNote"></span></div>
+      </div>
+      <div class="typerow">
+        <input id="typeInput" placeholder="Type the species name…" autocomplete="off" spellcheck="false" />
+        <button class="checkbtn" id="checkBtn">Check</button>
+      </div>
+      <div class="altlinks" id="altlinks">
+        <button id="famToggle">Only know the family? <span class="halfnote">+½</span></button>
+        <button id="dontKnow">Reveal — I don't know</button>
+      </div>
+      <div class="famchips" id="famchips"><span class="hint">Pick the family for half points:</span></div>
+      <div class="reveal" id="reveal"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <div class="nextbtn"><button id="nextBtn" disabled>Next bird</button></div>
+  </section>
+
+  <footer>
+    <strong>How the audio works —</strong> pick a region and the pool is every species in the catalogue for that
+    continent (filter by family if you want to drill one group). Recordings are pulled live from Xeno-canto's
+    Creative-Commons collection via GBIF's open API — no key — and stream on demand into an <code>&lt;audio&gt;</code>
+    element, so nothing is stored on your device. Only CC-licensed clips are used, with recordist and licence shown. If a
+    species has no fetchable clip, a short synthesised tone stands in so the quiz never stalls.
+  </footer>
+</div>
+
+<audio id="player" preload="none"></audio>
+
+<script>
+/* ============================================================================
+   DAWN CHORUS — region + taxonomic-family birdsong trainer
+   ========================================================================== */
+
+/* Linnaean family -> friendly English label (taxonomy shown on reveal). */
+const FAMILY_LABELS = {
+  Turdidae:"Thrushes", Muscicapidae:"Chats & Old World flycatchers", Paridae:"Tits & chickadees",
+  Fringillidae:"True finches", Emberizidae:"Old World buntings", Sylviidae:"Sylviid warblers",
+  Phylloscopidae:"Leaf warblers", Acrocephalidae:"Reed warblers", Troglodytidae:"Wrens",
+  Sittidae:"Nuthatches", Certhiidae:"Treecreepers", Alaudidae:"Larks", Cuculidae:"Cuckoos",
+  Charadriidae:"Plovers & lapwings", Scolopacidae:"Sandpipers, snipe & curlews",
+  Falconidae:"Falcons & caracaras", Accipitridae:"Hawks, kites & eagles",
+  Cardinalidae:"Cardinals & grosbeaks", Corvidae:"Crows & jays", Passerellidae:"New-World sparrows",
+  Icteridae:"New-World blackbirds & orioles", Parulidae:"New-World warblers",
+  Mimidae:"Mockingbirds & thrashers", Picidae:"Woodpeckers", Columbidae:"Pigeons & doves",
+  Strigidae:"Owls", Bombycillidae:"Waxwings", Tyrannidae:"Tyrant flycatchers",
+  Sturnidae:"Starlings & mynas", Pycnonotidae:"Bulbuls", Cisticolidae:"Cisticolas & allies",
+  Dicruridae:"Drongos", Laniidae:"Shrikes", Zosteropidae:"White-eyes", Passeridae:"Old-World sparrows",
+  Motacillidae:"Wagtails & pipits", Paradoxornithidae:"Parrotbills", Cettiidae:"Bush warblers",
+  Alcedinidae:"Kingfishers", Phasianidae:"Pheasants & allies", Threskiornithidae:"Ibises",
+  Musophagidae:"Turacos", Scopidae:"Hamerkop", Coliidae:"Mousebirds", Bucerotidae:"Hornbills",
+  Ploceidae:"Weavers", Estrildidae:"Waxbills & munias", Numididae:"Guineafowl",
+  Furnariidae:"Ovenbirds", Thraupidae:"Tanagers", Psittacidae:"New-World parrots",
+  Laridae:"Gulls", Artamidae:"Butcherbirds & allies", Rhipiduridae:"Fantails",
+  Cacatuidae:"Cockatoos", Psittaculidae:"Old-World parrots", Maluridae:"Fairywrens",
+  Monarchidae:"Monarch flycatchers", Meliphagidae:"Honeyeaters", Hirundinidae:"Swallows & martins",
+  Podargidae:"Frogmouths",
+};
+
+/* [ English, German (Europe only, else ""), Scientific, Region, Family ] */
+const RAW = [
+  // ---------- EUROPE ----------
+  ["Common Blackbird","Amsel","Turdus merula","Europe","Turdidae"],
+  ["Song Thrush","Singdrossel","Turdus philomelos","Europe","Turdidae"],
+  ["Mistle Thrush","Misteldrossel","Turdus viscivorus","Europe","Turdidae"],
+  ["Fieldfare","Wacholderdrossel","Turdus pilaris","Europe","Turdidae"],
+  ["Redwing","Rotdrossel","Turdus iliacus","Europe","Turdidae"],
+  ["European Robin","Rotkehlchen","Erithacus rubecula","Europe","Muscicapidae"],
+  ["Common Nightingale","Nachtigall","Luscinia megarhynchos","Europe","Muscicapidae"],
+  ["Common Redstart","Gartenrotschwanz","Phoenicurus phoenicurus","Europe","Muscicapidae"],
+  ["European Stonechat","Schwarzkehlchen","Saxicola rubicola","Europe","Muscicapidae"],
+  ["European Pied Flycatcher","Trauerschnäpper","Ficedula hypoleuca","Europe","Muscicapidae"],
+  ["Spotted Flycatcher","Grauschnäpper","Muscicapa striata","Europe","Muscicapidae"],
+  ["Great Tit","Kohlmeise","Parus major","Europe","Paridae"],
+  ["Blue Tit","Blaumeise","Cyanistes caeruleus","Europe","Paridae"],
+  ["Coal Tit","Tannenmeise","Periparus ater","Europe","Paridae"],
+  ["Marsh Tit","Sumpfmeise","Poecile palustris","Europe","Paridae"],
+  ["Crested Tit","Haubenmeise","Lophophanes cristatus","Europe","Paridae"],
+  ["Common Chaffinch","Buchfink","Fringilla coelebs","Europe","Fringillidae"],
+  ["European Greenfinch","Grünfink","Chloris chloris","Europe","Fringillidae"],
+  ["European Goldfinch","Stieglitz","Carduelis carduelis","Europe","Fringillidae"],
+  ["Eurasian Bullfinch","Gimpel","Pyrrhula pyrrhula","Europe","Fringillidae"],
+  ["Eurasian Siskin","Erlenzeisig","Spinus spinus","Europe","Fringillidae"],
+  ["Yellowhammer","Goldammer","Emberiza citrinella","Europe","Emberizidae"],
+  ["Reed Bunting","Rohrammer","Emberiza schoeniclus","Europe","Emberizidae"],
+  ["Eurasian Blackcap","Mönchsgrasmücke","Sylvia atricapilla","Europe","Sylviidae"],
+  ["Garden Warbler","Gartengrasmücke","Sylvia borin","Europe","Sylviidae"],
+  ["Common Whitethroat","Dorngrasmücke","Curruca communis","Europe","Sylviidae"],
+  ["Common Chiffchaff","Zilpzalp","Phylloscopus collybita","Europe","Phylloscopidae"],
+  ["Willow Warbler","Fitis","Phylloscopus trochilus","Europe","Phylloscopidae"],
+  ["Wood Warbler","Waldlaubsänger","Phylloscopus sibilatrix","Europe","Phylloscopidae"],
+  ["Sedge Warbler","Schilfrohrsänger","Acrocephalus schoenobaenus","Europe","Acrocephalidae"],
+  ["Eurasian Reed Warbler","Teichrohrsänger","Acrocephalus scirpaceus","Europe","Acrocephalidae"],
+  ["Eurasian Wren","Zaunkönig","Troglodytes troglodytes","Europe","Troglodytidae"],
+  ["Eurasian Nuthatch","Kleiber","Sitta europaea","Europe","Sittidae"],
+  ["Short-toed Treecreeper","Gartenbaumläufer","Certhia brachydactyla","Europe","Certhiidae"],
+  ["Eurasian Treecreeper","Waldbaumläufer","Certhia familiaris","Europe","Certhiidae"],
+  ["Eurasian Skylark","Feldlerche","Alauda arvensis","Europe","Alaudidae"],
+  ["Woodlark","Heidelerche","Lullula arborea","Europe","Alaudidae"],
+  ["Common Cuckoo","Kuckuck","Cuculus canorus","Europe","Cuculidae"],
+  ["Northern Lapwing","Kiebitz","Vanellus vanellus","Europe","Charadriidae"],
+  ["Common Sandpiper","Flussuferläufer","Actitis hypoleucos","Europe","Scolopacidae"],
+  ["Common Snipe","Bekassine","Gallinago gallinago","Europe","Scolopacidae"],
+  ["Eurasian Curlew","Großer Brachvogel","Numenius arquata","Europe","Scolopacidae"],
+  ["Common Redshank","Rotschenkel","Tringa totanus","Europe","Scolopacidae"],
+  ["Common Kestrel","Turmfalke","Falco tinnunculus","Europe","Falconidae"],
+  ["Eurasian Hobby","Baumfalke","Falco subbuteo","Europe","Falconidae"],
+  ["Peregrine Falcon","Wanderfalke","Falco peregrinus","Europe","Falconidae"],
+  ["Common Buzzard","Mäusebussard","Buteo buteo","Europe","Accipitridae"],
+  ["European Honey Buzzard","Wespenbussard","Pernis apivorus","Europe","Accipitridae"],
+  ["Rough-legged Buzzard","Raufußbussard","Buteo lagopus","Europe","Accipitridae"],
+
+  // ---------- NORTH AMERICA ----------
+  ["American Robin","","Turdus migratorius","North America","Turdidae"],
+  ["Wood Thrush","","Hylocichla mustelina","North America","Turdidae"],
+  ["Eastern Bluebird","","Sialia sialis","North America","Turdidae"],
+  ["Hermit Thrush","","Catharus guttatus","North America","Turdidae"],
+  ["Northern Cardinal","","Cardinalis cardinalis","North America","Cardinalidae"],
+  ["Rose-breasted Grosbeak","","Pheucticus ludovicianus","North America","Cardinalidae"],
+  ["Indigo Bunting","","Passerina cyanea","North America","Cardinalidae"],
+  ["Blue Jay","","Cyanocitta cristata","North America","Corvidae"],
+  ["American Crow","","Corvus brachyrhynchos","North America","Corvidae"],
+  ["Black-capped Chickadee","","Poecile atricapillus","North America","Paridae"],
+  ["Tufted Titmouse","","Baeolophus bicolor","North America","Paridae"],
+  ["Song Sparrow","","Melospiza melodia","North America","Passerellidae"],
+  ["White-throated Sparrow","","Zonotrichia albicollis","North America","Passerellidae"],
+  ["Chipping Sparrow","","Spizella passerina","North America","Passerellidae"],
+  ["Eastern Towhee","","Pipilo erythrophthalmus","North America","Passerellidae"],
+  ["Dark-eyed Junco","","Junco hyemalis","North America","Passerellidae"],
+  ["Red-winged Blackbird","","Agelaius phoeniceus","North America","Icteridae"],
+  ["Baltimore Oriole","","Icterus galbula","North America","Icteridae"],
+  ["Common Grackle","","Quiscalus quiscula","North America","Icteridae"],
+  ["American Goldfinch","","Spinus tristis","North America","Fringillidae"],
+  ["House Finch","","Haemorhous mexicanus","North America","Fringillidae"],
+  ["Yellow Warbler","","Setophaga petechia","North America","Parulidae"],
+  ["Common Yellowthroat","","Geothlypis trichas","North America","Parulidae"],
+  ["American Redstart","","Setophaga ruticilla","North America","Parulidae"],
+  ["Northern Mockingbird","","Mimus polyglottos","North America","Mimidae"],
+  ["Gray Catbird","","Dumetella carolinensis","North America","Mimidae"],
+  ["Carolina Wren","","Thryothorus ludovicianus","North America","Troglodytidae"],
+  ["House Wren","","Troglodytes aedon","North America","Troglodytidae"],
+  ["White-breasted Nuthatch","","Sitta carolinensis","North America","Sittidae"],
+  ["Downy Woodpecker","","Dryobates pubescens","North America","Picidae"],
+  ["Northern Flicker","","Colaptes auratus","North America","Picidae"],
+  ["Red-bellied Woodpecker","","Melanerpes carolinus","North America","Picidae"],
+  ["Mourning Dove","","Zenaida macroura","North America","Columbidae"],
+  ["Great Horned Owl","","Bubo virginianus","North America","Strigidae"],
+  ["Barred Owl","","Strix varia","North America","Strigidae"],
+  ["Red-tailed Hawk","","Buteo jamaicensis","North America","Accipitridae"],
+  ["American Kestrel","","Falco sparverius","North America","Falconidae"],
+  ["Killdeer","","Charadrius vociferus","North America","Charadriidae"],
+  ["Cedar Waxwing","","Bombycilla cedrorum","North America","Bombycillidae"],
+  ["Eastern Phoebe","","Sayornis phoebe","North America","Tyrannidae"],
+  ["Great Crested Flycatcher","","Myiarchus crinitus","North America","Tyrannidae"],
+
+  // ---------- ASIA ----------
+  ["Oriental Magpie-Robin","","Copsychus saularis","Asia","Muscicapidae"],
+  ["Daurian Redstart","","Phoenicurus auroreus","Asia","Muscicapidae"],
+  ["Siberian Rubythroat","","Calliope calliope","Asia","Muscicapidae"],
+  ["Common Myna","","Acridotheres tristis","Asia","Sturnidae"],
+  ["Red-whiskered Bulbul","","Pycnonotus jocosus","Asia","Pycnonotidae"],
+  ["Light-vented Bulbul","","Pycnonotus sinensis","Asia","Pycnonotidae"],
+  ["Brown-eared Bulbul","","Hypsipetes amaurotis","Asia","Pycnonotidae"],
+  ["Japanese Tit","","Parus minor","Asia","Paridae"],
+  ["Asian Koel","","Eudynamys scolopaceus","Asia","Cuculidae"],
+  ["Common Tailorbird","","Orthotomus sutorius","Asia","Cisticolidae"],
+  ["Black Drongo","","Dicrurus macrocercus","Asia","Dicruridae"],
+  ["Long-tailed Shrike","","Lanius schach","Asia","Laniidae"],
+  ["Spotted Dove","","Spilopelia chinensis","Asia","Columbidae"],
+  ["Oriental Turtle Dove","","Streptopelia orientalis","Asia","Columbidae"],
+  ["Warbling White-eye","","Zosterops japonicus","Asia","Zosteropidae"],
+  ["Large-billed Crow","","Corvus macrorhynchos","Asia","Corvidae"],
+  ["Eurasian Tree Sparrow","","Passer montanus","Asia","Passeridae"],
+  ["White Wagtail","","Motacilla alba","Asia","Motacillidae"],
+  ["Vinous-throated Parrotbill","","Sinosuthora webbiana","Asia","Paradoxornithidae"],
+  ["Japanese Bush Warbler","","Horornis diphone","Asia","Cettiidae"],
+  ["Grey-headed Woodpecker","","Picus canus","Asia","Picidae"],
+  ["Common Kingfisher","","Alcedo atthis","Asia","Alcedinidae"],
+  ["Red Junglefowl","","Gallus gallus","Asia","Phasianidae"],
+  ["Indian Peafowl","","Pavo cristatus","Asia","Phasianidae"],
+
+  // ---------- AFRICA ----------
+  ["Common Bulbul","","Pycnonotus barbatus","Africa","Pycnonotidae"],
+  ["Dark-capped Bulbul","","Pycnonotus tricolor","Africa","Pycnonotidae"],
+  ["Superb Starling","","Lamprotornis superbus","Africa","Sturnidae"],
+  ["Hadada Ibis","","Bostrychia hagedash","Africa","Threskiornithidae"],
+  ["Augur Buzzard","","Buteo augur","Africa","Accipitridae"],
+  ["White-browed Robin-Chat","","Cossypha heuglini","Africa","Muscicapidae"],
+  ["African Stonechat","","Saxicola torquatus","Africa","Muscicapidae"],
+  ["Laughing Dove","","Spilopelia senegalensis","Africa","Columbidae"],
+  ["Red-eyed Dove","","Streptopelia semitorquata","Africa","Columbidae"],
+  ["Fork-tailed Drongo","","Dicrurus adsimilis","Africa","Dicruridae"],
+  ["Grey Go-away-bird","","Corythaixoides concolor","Africa","Musophagidae"],
+  ["Hamerkop","","Scopus umbretta","Africa","Scopidae"],
+  ["Speckled Mousebird","","Colius striatus","Africa","Coliidae"],
+  ["African Grey Hornbill","","Lophoceros nasutus","Africa","Bucerotidae"],
+  ["Pied Crow","","Corvus albus","Africa","Corvidae"],
+  ["Southern Masked Weaver","","Ploceus velatus","Africa","Ploceidae"],
+  ["Cape Sparrow","","Passer melanurus","Africa","Passeridae"],
+  ["Bronze Mannikin","","Spermestes cucullata","Africa","Estrildidae"],
+  ["Crowned Lapwing","","Vanellus coronatus","Africa","Charadriidae"],
+  ["Blacksmith Lapwing","","Vanellus armatus","Africa","Charadriidae"],
+  ["Helmeted Guineafowl","","Numida meleagris","Africa","Numididae"],
+  ["Tawny-flanked Prinia","","Prinia subflava","Africa","Cisticolidae"],
+
+  // ---------- SOUTH AMERICA ----------
+  ["Rufous-collared Sparrow","","Zonotrichia capensis","South America","Passerellidae"],
+  ["Great Kiskadee","","Pitangus sulphuratus","South America","Tyrannidae"],
+  ["Tropical Kingbird","","Tyrannus melancholicus","South America","Tyrannidae"],
+  ["Fork-tailed Flycatcher","","Tyrannus savana","South America","Tyrannidae"],
+  ["Vermilion Flycatcher","","Pyrocephalus rubinus","South America","Tyrannidae"],
+  ["Southern Lapwing","","Vanellus chilensis","South America","Charadriidae"],
+  ["Rufous Hornero","","Furnarius rufus","South America","Furnariidae"],
+  ["House Wren","","Troglodytes aedon","South America","Troglodytidae"],
+  ["Sayaca Tanager","","Thraupis sayaca","South America","Thraupidae"],
+  ["Saffron Finch","","Sicalis flaveola","South America","Thraupidae"],
+  ["Bananaquit","","Coereba flaveola","South America","Thraupidae"],
+  ["Chalk-browed Mockingbird","","Mimus saturninus","South America","Mimidae"],
+  ["Blue-and-yellow Macaw","","Ara ararauna","South America","Psittacidae"],
+  ["Kelp Gull","","Larus dominicanus","South America","Laridae"],
+  ["Eared Dove","","Zenaida auriculata","South America","Columbidae"],
+  ["Picazuro Pigeon","","Patagioenas picazuro","South America","Columbidae"],
+  ["Pale-breasted Thrush","","Turdus leucomelas","South America","Turdidae"],
+  ["Rufous-bellied Thrush","","Turdus rufiventris","South America","Turdidae"],
+  ["Green-barred Woodpecker","","Colaptes melanochloros","South America","Picidae"],
+  ["Guira Cuckoo","","Guira guira","South America","Cuculidae"],
+  ["Smooth-billed Ani","","Crotophaga ani","South America","Cuculidae"],
+  ["Chimango Caracara","","Milvago chimango","South America","Falconidae"],
+  ["Southern Crested Caracara","","Caracara plancus","South America","Falconidae"],
+
+  // ---------- AUSTRALASIA ----------
+  ["Australian Magpie","","Gymnorhina tibicen","Australasia","Artamidae"],
+  ["Pied Currawong","","Strepera graculina","Australasia","Artamidae"],
+  ["Grey Butcherbird","","Cracticus torquatus","Australasia","Artamidae"],
+  ["Laughing Kookaburra","","Dacelo novaeguineae","Australasia","Alcedinidae"],
+  ["Willie Wagtail","","Rhipidura leucophrys","Australasia","Rhipiduridae"],
+  ["Grey Fantail","","Rhipidura albiscapa","Australasia","Rhipiduridae"],
+  ["Rainbow Lorikeet","","Trichoglossus moluccanus","Australasia","Psittaculidae"],
+  ["Crimson Rosella","","Platycercus elegans","Australasia","Psittaculidae"],
+  ["Australian King-Parrot","","Alisterus scapularis","Australasia","Psittaculidae"],
+  ["Galah","","Eolophus roseicapilla","Australasia","Cacatuidae"],
+  ["Sulphur-crested Cockatoo","","Cacatua galerita","Australasia","Cacatuidae"],
+  ["Superb Fairywren","","Malurus cyaneus","Australasia","Maluridae"],
+  ["Magpie-lark","","Grallina cyanoleuca","Australasia","Monarchidae"],
+  ["Noisy Miner","","Manorina melanocephala","Australasia","Meliphagidae"],
+  ["New Holland Honeyeater","","Phylidonyris novaehollandiae","Australasia","Meliphagidae"],
+  ["Australian Raven","","Corvus coronoides","Australasia","Corvidae"],
+  ["Silvereye","","Zosterops lateralis","Australasia","Zosteropidae"],
+  ["Masked Lapwing","","Vanellus miles","Australasia","Charadriidae"],
+  ["Welcome Swallow","","Hirundo neoxena","Australasia","Hirundinidae"],
+  ["Tawny Frogmouth","","Podargus strigoides","Australasia","Podargidae"],
+];
+const SPECIES = RAW.map((r,i)=>({ id:i, en:r[0], de:r[1], sci:r[2], reg:r[3], fam:r[4],
+  xcId:null, rec:null, lic:null, ref:null, hasReal:false }));
+const famLabel = f => FAMILY_LABELS[f] || f;
+
+/* ---- Answer matching ---- */
+const STRIP=/^(common|eurasian|european|northern|southern|american|australian|african|oriental|greater|lesser)\s+/;
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+                .replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+function acceptedNames(s){
+  const set=new Set([norm(s.en), norm(s.sci)]);
+  if(s.de) set.add(norm(s.de));
+  const short=norm(s.en).replace(STRIP,''); if(short) set.add(short);
+  return set;
+}
+const speciesMatches=(typed,s)=>acceptedNames(s).has(norm(typed));
+
+/* ---- SRS (Leitner), no frequency/season ---- */
+const INTERVAL={0:0,1:1,2:3,3:6,4:12,5:24};
+const POINTS={full:10,half:5,miss:0};
+const state={
+  region:"Europe",
+  step:0, score:0, current:null, mediaReal:false,
+  enabled:new Set(),                 // enabled families for current region
+  cards:SPECIES.map(s=>({id:s.id,box:0,due:0,seen:false})),
+};
+const card=id=>state.cards.find(c=>c.id===id);
+const inScope=id=>SPECIES[id].reg===state.region && state.enabled.has(SPECIES[id].fam);
+const regionFamilies=()=>[...new Set(SPECIES.filter(s=>s.reg===state.region).map(s=>s.fam))]
+                          .sort((a,b)=>famLabel(a).localeCompare(famLabel(b)));
+const deck=()=>state.cards.filter(c=>inScope(c.id));
+
+function pickNext(){
+  const d=deck(); if(!d.length) return null;
+  const due=d.filter(c=>c.seen && c.due<=state.step && c.box<5 && c.id!==state.current);
+  if(due.length){ due.sort((a,b)=>a.box-b.box); return due[0].id; }
+  const fresh=d.filter(c=>!c.seen);
+  if(fresh.length) return fresh[Math.floor(Math.random()*fresh.length)].id;
+  const pool=d.filter(c=>c.id!==state.current);
+  const arr=pool.length?pool:d;
+  return arr[Math.floor(Math.random()*arr.length)].id;
+}
+function schedule(id,outcome){
+  const c=card(id); c.seen=true; state.step++;
+  if(outcome==='full') c.box=Math.min(c.box+1,5);
+  else if(outcome==='half') c.box=Math.max(c.box,1);
+  else c.box=1;
+  const iv=outcome==='half'?Math.max(1,Math.floor(INTERVAL[c.box]/2)):INTERVAL[c.box];
+  c.due=state.step+iv; state.score+=POINTS[outcome];
+  el('score').textContent=state.score;
+}
+
+/* ---- Audio: live CC recordings via GBIF, synth fallback ---- */
+const XC_DATASET="b1047888-ae52-4179-9dd5-5448ea342a24";
+const recCache=new Map();
+const licShort=u=>{ if(!u) return 'CC'; const m=u.match(/licenses\/([a-z-]+)/i); return m?('CC-'+m[1].toUpperCase()):'CC'; };
+async function fetchRecordingLive(id){
+  if(recCache.has(id)) return recCache.get(id);
+  const sci=SPECIES[id].sci;
+  try{
+    const url=`https://api.gbif.org/v1/occurrence/search?datasetKey=${XC_DATASET}`
+             +`&scientificName=${encodeURIComponent(sci)}&mediaType=Sound&limit=40`;
+    const data=await (await fetch(url)).json();
+    const cands=[];
+    for(const r of (data.results||[])){
+      for(const m of (r.media||[])){
+        const isSound=(m.type==='Sound')||/audio/i.test(m.format||'');
+        const lic=m.license||r.license||'';
+        if(isSound && m.identifier && /creativecommons/i.test(lic)){
+          cands.push({ audioUrl:m.identifier, ref:m.references||'',
+            rec:m.creator||m.rightsHolder||r.recordedBy||'unknown recordist', lic:licShort(lic) });
+        }
+      }
+    }
+    const pick=cands.length?cands[Math.floor(Math.random()*Math.min(cands.length,15))]:null;
+    recCache.set(id,pick); return pick;
+  }catch(e){ recCache.set(id,null); return null; }
+}
+let actx,analyser,freqData,rafId,playingSynth=false;
+const player=document.getElementById('player');
+function ensureCtx(){
+  if(!actx){ actx=new (window.AudioContext||window.webkitAudioContext)();
+    analyser=actx.createAnalyser(); analyser.fftSize=256; freqData=new Uint8Array(analyser.frequencyBinCount); }
+  if(actx.state==='suspended') actx.resume();
+}
+function updateClipNote(id){
+  const s=SPECIES[id];
+  el('clipNote').innerHTML = s.hasReal
+    ? `Recording by <strong>${s.rec}</strong> · <span class="lic">${s.lic}</span>`
+      +(s.ref?` · <a href="${s.ref}" target="_blank" rel="noopener">Xeno-canto ↗</a>`:'')
+    : `Creative-Commons recording via Xeno-canto / GBIF.`;
+}
+async function playClip(id){
+  if(id==null) return;
+  ensureCtx(); stopAudio(); setStatus('finding a recording…');
+  const rec=await fetchRecordingLive(id);
+  if(state.current!==id) return;
+  if(rec && rec.audioUrl){
+    const s=SPECIES[id]; s.rec=rec.rec; s.lic=rec.lic; s.ref=rec.ref; s.hasReal=true;
+    state.mediaReal=true; updateClipNote(id);
+    player.src=rec.audioUrl;
+    player.play().then(()=>{ setStatus('streaming · xeno-canto via gbif'); animateStylised(id); })
+                 .catch(()=>{ setStatus('clip blocked — playing tone'); synth(id); });
+  } else { state.mediaReal=false; SPECIES[id].hasReal=false; updateClipNote(id); synth(id); }
+}
+function togglePlay(){
+  if(state.current==null) return;
+  ensureCtx();
+  if(state.mediaReal && !player.ended && player.src){
+    if(player.paused){ player.play().then(()=>animateStylised(state.current)).catch(()=>{}); }
+    else player.pause();
+    return;
+  }
+  playClip(state.current);
+}
+function synth(id){
+  playingSynth=true; setStatus('demo tone'); setPlayIcon(true);
+  const t0=actx.currentTime, base=1500+((id*197)%2500), notes=3+(id%4), trill=id%3===0;
+  const master=actx.createGain(); master.gain.value=1; master.connect(actx.destination); master.connect(analyser);
+  for(let n=0;n<notes;n++){
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type=trill?'triangle':'sine';
+    const start=t0+n*0.22, f=base*(1+0.12*Math.sin(n*1.7+id));
+    o.frequency.setValueAtTime(f,start);
+    o.frequency.linearRampToValueAtTime(f*(trill?1.4:1.08),start+0.18);
+    g.gain.setValueAtTime(.0001,start);
+    g.gain.exponentialRampToValueAtTime(.16,start+0.02);
+    g.gain.exponentialRampToValueAtTime(.0001,start+0.2);
+    o.connect(g); g.connect(master); o.start(start); o.stop(start+0.22);
+  }
+  drawFromAnalyser();
+  setTimeout(()=>{ if(playingSynth){ stopAudio(); setStatus('done'); setPlayIcon(false); } }, notes*230+150);
+}
+function stopAudio(){ playingSynth=false; cancelAnimationFrame(rafId); try{player.pause();}catch(e){} }
+
+/* ---- Play/pause icon ---- */
+const PLAY_SVG='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+const PAUSE_SVG='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+const setPlayIcon=on=>{ el('playBtn').innerHTML=on?PAUSE_SVG:PLAY_SVG; };
+player.addEventListener('play',()=>setPlayIcon(true));
+player.addEventListener('pause',()=>setPlayIcon(false));
+
+/* ---- Spectrogram ---- */
+const cv=document.getElementById('scope'), cx=cv.getContext('2d');
+cx.fillStyle='#0c1817'; cx.fillRect(0,0,cv.width,cv.height);
+function paintColumn(vals){
+  const w=cv.width,h=cv.height,colW=3;
+  const img=cx.getImageData(colW,0,w-colW,h); cx.putImageData(img,0,0);
+  cx.fillStyle='#0c1817'; cx.fillRect(w-colW,0,colW,h);
+  for(let i=0;i<vals.length;i++){ const v=vals[i]/255; if(v<0.04) continue;
+    const y=h-(i/vals.length)*h; cx.fillStyle=`rgba(240,182,74,${Math.min(1,v*1.4)})`; cx.fillRect(w-colW,y-2,colW,3); }
+}
+function drawFromAnalyser(){ analyser.getByteFrequencyData(freqData); paintColumn(freqData); rafId=requestAnimationFrame(drawFromAnalyser); }
+function animateStylised(id){
+  const seed=id*13.7;
+  const tick=()=>{ const t=player.currentTime||0, col=new Uint8Array(64);
+    for(let i=0;i<64;i++){ const band=Math.sin(i*0.35+t*9+seed)*Math.sin(i*0.11+t*3);
+      col[i]=Math.max(0,band)*255*(0.5+0.5*Math.sin(t*6+seed)); }
+    paintColumn(col); if(!player.paused && !player.ended) rafId=requestAnimationFrame(tick); };
+  tick();
+}
+player.addEventListener('ended',()=>{ cancelAnimationFrame(rafId); setStatus('done'); setPlayIcon(false); });
+player.addEventListener('error',()=>{ if(state.current!=null && state.mediaReal){ setStatus('clip error — tone'); synth(state.current); }});
+const setStatus=t=>el('scopeStatus').textContent=t;
+
+/* ---- Rendering ---- */
+const el=id=>document.getElementById(id);
+
+function renderFilters(){
+  const box=el('filters');
+  box.querySelectorAll('.chip,.allbtn').forEach(n=>n.remove());
+  regionFamilies().forEach(f=>{
+    const b=document.createElement('button');
+    b.className='chip'+(state.enabled.has(f)?' on':'');
+    b.textContent=famLabel(f); b.title=f;
+    b.onclick=()=>{ state.enabled.has(f)?state.enabled.delete(f):state.enabled.add(f); afterScopeChange(); };
+    box.appendChild(b);
+  });
+  const fams=regionFamilies();
+  const all=document.createElement('button'); all.className='allbtn';
+  all.textContent = state.enabled.size===fams.length ? 'clear all' : 'select all';
+  all.onclick=()=>{ if(state.enabled.size===fams.length) state.enabled.clear(); else fams.forEach(f=>state.enabled.add(f)); afterScopeChange(); };
+  box.appendChild(all);
+}
+function renderFamAnswerChips(){
+  const box=el('famchips');
+  box.querySelectorAll('.chip').forEach(n=>n.remove());
+  regionFamilies().filter(f=>state.enabled.has(f)).forEach(f=>{
+    const b=document.createElement('button'); b.className='chip mini'; b.textContent=famLabel(f); b.title=f;
+    b.onclick=()=>commit('half',f); box.appendChild(b);
+  });
+}
+
+function renderStudy(){
+  const id=state.current;
+  el('reveal').className='reveal'; el('reveal').innerHTML='';
+  el('feedback').innerHTML=''; el('famchips').className='famchips'; el('nextBtn').disabled=true;
+  setPlayIcon(false);
+
+  if(id==null){
+    el('studyBody').querySelectorAll('.scope,.playrow,.typerow,.altlinks').forEach(n=>n.style.display='none');
+    let e=el('emptyMsg'); if(!e){ e=document.createElement('div'); e.id='emptyMsg'; e.className='empty'; el('studyBody').appendChild(e); }
+    e.style.display='block'; e.textContent=state.enabled.size?'No birds match — adjust the family filter.':'Pick at least one family to train.';
+    return;
+  }
+  if(el('emptyMsg')) el('emptyMsg').style.display='none';
+  el('studyBody').querySelector('.scope').style.display='';
+  el('studyBody').querySelector('.playrow').style.display='flex';
+  el('studyBody').querySelector('.typerow').style.display='flex';
+  el('studyBody').querySelector('.altlinks').style.display='flex';
+
+  const s=SPECIES[id];
+  el('clipNote').innerHTML = s.hasReal ? '' : `Press play to stream a Creative-Commons recording.`;
+  if(s.hasReal) updateClipNote(id);
+  const inp=el('typeInput'); inp.value=''; inp.disabled=false; el('checkBtn').disabled=false;
+  setTimeout(()=>inp.focus(),0);
+}
+
+function commit(outcome, chosenFam){
+  const id=state.current, s=SPECIES[id];
+  let result=outcome;
+  if(outcome==='full'){ const t=el('typeInput').value.trim(); if(!t) return; result=speciesMatches(t,s)?'full':'miss'; }
+  else if(outcome==='half'){ result=(chosenFam===s.fam)?'half':'miss'; }
+  schedule(id,result);
+  el('typeInput').disabled=true; el('checkBtn').disabled=true; el('famchips').className='famchips';
+
+  const cls=result==='full'?'full':result==='half'?'half':'miss';
+  const label=`+${POINTS[result]}`;
+  el('reveal').className='reveal show';
+  el('reveal').innerHTML=`<div class="bird">${s.en}<span class="points ${cls}">${label}</span></div>
+    <div class="meta">${s.de?s.de+' · ':''}${s.sci}</div>
+    <div class="grp">${famLabel(s.fam)} · ${s.fam}</div>`;
+  const fb=el('feedback');
+  if(result==='full') fb.innerHTML=`<span class="ok">Full marks — species nailed.</span>`;
+  else if(result==='half') fb.innerHTML=`<span class="part">Right family, half marks. It was the ${s.en}.</span>`;
+  else if(outcome==='full') fb.innerHTML=`<span class="no">Not quite — it was the ${s.en}.</span>`;
+  else if(outcome==='half') fb.innerHTML=`<span class="no">Wrong family — it's ${famLabel(s.fam)}. Comes back soon.</span>`;
+  else fb.innerHTML=`<span class="no">It was the ${s.en} — ${famLabel(s.fam)}. Back in rotation.</span>`;
+  el('nextBtn').disabled=false;
+}
+
+/* ---- Flow ---- */
+function nextBird(){ state.current=pickNext(); renderStudy(); playClip(state.current); }
+function afterScopeChange(){ renderFilters(); renderFamAnswerChips();
+  if(state.current==null || !inScope(state.current)) state.current=pickNext();
+  renderStudy();
+}
+el('playBtn').onclick=togglePlay;
+el('nextBtn').onclick=nextBird;
+el('checkBtn').onclick=()=>commit('full');
+el('typeInput').addEventListener('keydown',e=>{ if(e.key==='Enter' && !el('checkBtn').disabled) commit('full'); });
+el('famToggle').onclick=()=>el('famchips').classList.toggle('show');
+el('dontKnow').onclick=()=>commit('miss');
+el('region').onchange=e=>{ state.region=e.target.value; state.enabled=new Set(regionFamilies()); state.current=null; afterScopeChange(); };
+
+/* boot */
+state.region=el('region').value;
+state.enabled=new Set(regionFamilies());
+renderFilters(); renderFamAnswerChips();
+state.current=pickNext(); renderStudy();
+</script>
+</body>
+</html>
