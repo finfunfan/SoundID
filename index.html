@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dawn Chorus — learn birds by ear</title>
+<title>Sound ID — learn birds by ear</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -24,34 +24,66 @@
     color:var(--ink); font-family:"Inter",system-ui,sans-serif; min-height:100vh;
     line-height:1.5; -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:720px;margin:0 auto;padding:28px 22px 60px}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 22px 60px}
   a{color:var(--amber)}
   .mono{font-family:"IBM Plex Mono",monospace}
+  .screen{display:none}
+  .screen.on{display:block}
 
-  header{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
-  .brand h1{font-family:"Fraunces",serif;font-weight:500;font-size:32px;line-height:1;margin:0;letter-spacing:-.01em}
-  .brand h1 .dot{color:var(--amber)}
-  .brand p{margin:8px 0 0;color:var(--muted);font-size:13.5px;max-width:44ch}
-  .controls{display:flex;flex-direction:column;gap:8px;align-items:flex-end;min-width:210px}
-  .field{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:7px 11px;width:100%}
-  .field label{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
-  .field select{background:transparent;border:0;color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:13px;outline:none;width:100%;text-align:right;cursor:pointer}
-  .field select option{background:var(--panel2);color:var(--ink)}
-  .scorechip{display:flex;align-items:baseline;gap:8px;justify-content:flex-end;width:100%;padding-right:2px}
-  .scorechip .n{font-family:"IBM Plex Mono",monospace;font-size:20px;color:var(--amber)}
-  .scorechip .l{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+  .masthead{display:flex;align-items:baseline;gap:14px;margin-bottom:4px}
+  .masthead h1{font-family:"Fraunces",serif;font-weight:500;font-size:34px;line-height:1;margin:0;letter-spacing:-.01em}
+  .masthead h1 .dot{color:var(--amber)}
+  .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);border:1px solid var(--line);border-radius:20px;padding:3px 10px}
+  .lead{color:var(--muted);font-size:14px;margin:8px 0 26px;max-width:52ch}
 
-  .filters{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:0 0 20px;padding:13px 15px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
-  .filters .flabel{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-right:4px;width:100%}
+  .back{display:inline-flex;align-items:center;gap:7px;background:none;border:0;color:var(--muted);font-family:inherit;font-size:13px;cursor:pointer;padding:0;margin-bottom:18px}
+  .back:hover{color:var(--ink)}
+
+  /* Home tiles */
+  .tiles{display:flex;flex-direction:column;gap:16px}
+  .tile{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:18px;padding:22px;cursor:pointer;
+    background:var(--panel);color:var(--ink);font-family:inherit;transition:.15s;box-shadow:var(--shadow);position:relative}
+  .tile:hover{transform:translateY(-2px);border-color:var(--muted)}
+  .tile .t-title{font-family:"Fraunces",serif;font-size:24px;font-weight:500}
+  .tile .t-sub{color:var(--muted);font-size:13.5px;margin-top:6px;max-width:52ch}
+  .tile .t-open{position:absolute;top:20px;right:20px;color:var(--muted);font-size:11px;font-family:"IBM Plex Mono",monospace}
+  .tile.daily{background:linear-gradient(120deg,#20321d,#132523);border-color:#3a5a2e}
+  .tile.daily .t-title{color:var(--amber)}
+  .tile.learn{background:linear-gradient(120deg,#16302a,#132523)}
+  .tile.learn .t-title{color:var(--moss)}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+  .pad{padding:22px}
+
+  /* Config */
+  .cfg-label{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:18px 0 8px}
+  .cfg-label:first-child{margin-top:0}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg button{border:1px solid var(--line);background:var(--panel2);color:var(--ink);font-family:inherit;font-size:14px;font-weight:600;
+    padding:11px 16px;border-radius:12px;cursor:pointer;transition:.12s;text-align:left}
+  .seg button small{display:block;font-weight:400;color:var(--muted);font-size:11.5px;margin-top:2px}
+  .seg button.on{background:var(--amber);border-color:var(--amber);color:#20140a}
+  .seg button.on small{color:#5c3f14}
+  .selrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+  .sel{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:8px 12px}
+  .sel label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+  .sel select{background:transparent;border:0;color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:13px;outline:none;cursor:pointer}
+  .sel select option{background:var(--panel2)}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
   .chip{border:1px solid var(--line);background:transparent;color:var(--muted);font-family:inherit;font-size:12.5px;font-weight:500;padding:6px 12px;border-radius:20px;cursor:pointer;transition:.12s}
   .chip:hover{border-color:var(--muted);color:var(--ink)}
   .chip.on{background:var(--amber);border-color:var(--amber);color:#20140a}
   .chip.mini{padding:5px 10px;font-size:12px}
-  .filters .allbtn{margin-left:auto;font-size:11px;color:var(--muted);background:none;border:0;cursor:pointer;text-decoration:underline;font-family:inherit}
+  .allbtn{font-size:11px;color:var(--muted);background:none;border:0;cursor:pointer;text-decoration:underline;font-family:inherit;margin-left:4px}
+  .startbtn{margin-top:24px;width:100%;border:0;background:var(--amber);color:#20140a;font-family:inherit;font-weight:600;font-size:15px;padding:14px;border-radius:12px;cursor:pointer}
+  .startbtn:disabled{background:var(--panel2);color:var(--muted);cursor:default}
+  .poolnote{color:var(--muted);font-size:12px;margin-top:10px;text-align:center}
 
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
-  .study{padding:22px}
-
+  /* Play card */
+  .ctxbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+  .ctxbar .ctx{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.03em}
+  .ctxbar .score{font-family:"IBM Plex Mono",monospace;font-size:16px;color:var(--amber)}
+  .ctxbar .link{background:none;border:0;color:var(--muted);font-family:inherit;font-size:12px;cursor:pointer;text-decoration:underline}
   .scope{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(180deg,#0b1615,#0e1c1a)}
   canvas{display:block;width:100%;height:150px}
   .scope .status{position:absolute;left:14px;bottom:11px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.04em;text-shadow:0 1px 6px #000}
@@ -62,7 +94,6 @@
   .attrib{font-size:11.5px;color:var(--muted)}
   .attrib .lic{color:var(--moss)}
   .attrib a{text-decoration:none;border-bottom:1px dotted var(--line)}
-
   .typerow{display:flex;gap:9px;margin-top:20px}
   .typerow input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-family:inherit;font-size:15px;padding:13px 15px;outline:none}
   .typerow input:focus{border-color:var(--amber)}
@@ -73,11 +104,9 @@
   .altlinks button{background:none;border:0;color:var(--muted);cursor:pointer;font-family:inherit;font-size:12.5px;padding:0;text-decoration:underline;text-underline-offset:3px}
   .altlinks button:hover{color:var(--ink)}
   .altlinks .halfnote{color:var(--amber)}
-
-  .famchips{display:none;flex-wrap:wrap;gap:7px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
-  .famchips.show{display:flex}
-  .famchips .hint{width:100%;font-size:11px;color:var(--muted);margin-bottom:2px}
-
+  .famans{display:none;flex-wrap:wrap;gap:7px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+  .famans.show{display:flex}
+  .famans .hint{width:100%;font-size:11px;color:var(--muted);margin-bottom:2px}
   .reveal{margin-top:18px;display:none}
   .reveal.show{display:block}
   .reveal .bird{font-family:"Fraunces",serif;font-size:26px;font-weight:500;line-height:1.1}
@@ -87,81 +116,134 @@
   .points.full{color:var(--moss)} .points.half{color:var(--amber)} .points.miss{color:var(--coral)}
   .feedback{margin-top:14px;min-height:20px;font-size:14px}
   .feedback .ok{color:var(--moss)} .feedback .no{color:var(--coral)} .feedback .part{color:var(--amber)}
-  .empty{padding:40px 10px;text-align:center;color:var(--muted);font-size:14px}
   .nextbtn{margin-top:20px}
   .nextbtn button{width:100%;border:0;background:var(--amber);color:#20140a;font-family:inherit;font-weight:600;font-size:15px;padding:14px;border-radius:12px;cursor:pointer}
-  .nextbtn button:disabled{background:var(--panel2);color:var(--muted);cursor:default}
+  .daily-done{margin-top:18px;padding:16px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:13.5px;text-align:center}
+
+  /* Learn */
+  .search{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-family:inherit;font-size:15px;padding:12px 15px;outline:none;margin-bottom:6px}
+  .search:focus{border-color:var(--amber)}
+  .learnbar{font-size:11.5px;color:var(--muted);min-height:18px;margin:8px 2px 12px}
+  .learnbar .lic{color:var(--moss)}
+  .learnlist{display:flex;flex-direction:column}
+  .lfam{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin:16px 2px 6px;border-bottom:1px solid var(--line);padding-bottom:5px}
+  .lrow{display:flex;align-items:center;gap:12px;padding:9px 8px;border-radius:10px}
+  .lrow:hover{background:var(--panel2)}
+  .lrow.playing{background:var(--panel2)}
+  .lplay{width:34px;height:34px;flex:0 0 auto;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:var(--amber);cursor:pointer;display:grid;place-items:center}
+  .lplay:hover{border-color:var(--amber)}
+  .lplay svg{width:14px;height:14px;fill:currentColor}
+  .lname{font-size:14px}.lname small{display:block;color:var(--muted);font-size:11.5px;font-style:italic}
 
   footer{margin-top:26px;color:var(--muted);font-size:12px;line-height:1.6;border-top:1px solid var(--line);padding-top:16px}
   footer code{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11.5px}
-  .tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);border:1px solid var(--line);border-radius:20px;padding:3px 10px;margin-bottom:14px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="brand">
-      <span class="tag">Birding by ear</span>
-      <h1>Dawn Chorus<span class="dot">.</span></h1>
-      <p>Hear a song, type the species for full marks or name its family for half.</p>
-    </div>
-    <div class="controls">
-      <div class="field"><label for="region">Region</label>
-        <select id="region"><option value="Europe" selected>Europe</option></select>
-      </div>
-      <div class="scorechip"><span class="n" id="score">0</span><span class="l">points</span></div>
-    </div>
-  </header>
 
-  <div class="filters" id="filters"><span class="flabel">Families</span></div>
-
-  <section class="card study" id="study">
-    <div id="studyBody">
-      <div class="scope">
-        <canvas id="scope" width="900" height="300"></canvas>
-        <div class="status mono" id="scopeStatus">press play</div>
-      </div>
-      <div class="playrow">
-        <button class="play" id="playBtn" aria-label="Play or pause"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-        <div class="attrib" id="attrib"><span id="clipNote"></span></div>
-      </div>
-      <div class="typerow">
-        <input id="typeInput" placeholder="Type the species name…" autocomplete="off" spellcheck="false" />
-        <button class="checkbtn" id="checkBtn">Check</button>
-      </div>
-      <div class="altlinks" id="altlinks">
-        <button id="famToggle">Only know the family? <span class="halfnote">+½</span></button>
-        <button id="dontKnow">Reveal — I don't know</button>
-      </div>
-      <div class="famchips" id="famchips"><span class="hint">Pick the family for half points:</span></div>
-      <div class="reveal" id="reveal"></div>
-      <div class="feedback" id="feedback"></div>
+  <!-- ============ HOME ============ -->
+  <section id="scr-home" class="screen on">
+    <div class="masthead"><h1>Sound ID<span class="dot">.</span></h1><span class="tag">Birds by ear · Europe</span></div>
+    <p class="lead">Learn to identify European birds by their songs and calls. Pick a mode — each opens in its own window.</p>
+    <div class="tiles">
+      <button class="tile daily" onclick="openScreen('daily')">
+        <span class="t-open">open ↗</span>
+        <div class="t-title">Sound of the Day</div>
+        <div class="t-sub">One random species every day, drawn from every European bird. Same challenge for everyone, resets at midnight.</div>
+      </button>
+      <button class="tile" onclick="openScreen('quiz')">
+        <span class="t-open">open ↗</span>
+        <div class="t-title">Quiz</div>
+        <div class="t-sub">Test yourself. Choose difficulty — all species, or just the common birds of your region and season — and which families to include.</div>
+      </button>
+      <button class="tile learn" onclick="openScreen('learn')">
+        <span class="t-open">open ↗</span>
+        <div class="t-title">Learn</div>
+        <div class="t-sub">Browse every species and play its sound. No scoring — just listen and get familiar.</div>
+      </button>
     </div>
-    <div class="nextbtn"><button id="nextBtn" disabled>Next bird</button></div>
+    <footer>
+      Recordings stream live from Xeno-canto's Creative-Commons collection via GBIF's open API — no key, nothing stored on
+      your device, recordist and licence shown on every clip. If a species has no fetchable clip, a short tone stands in.
+    </footer>
   </section>
 
-  <footer>
-    <strong>How the audio works —</strong> pick a region and the pool is every species in the catalogue for that
-    continent (filter by family if you want to drill one group). Recordings are pulled live from Xeno-canto's
-    Creative-Commons collection via GBIF's open API — no key — and stream on demand into an <code>&lt;audio&gt;</code>
-    element, so nothing is stored on your device. Only CC-licensed clips are used, with recordist and licence shown. If a
-    species has no fetchable clip, a short synthesised tone stands in so the quiz never stalls.
-  </footer>
+  <!-- ============ QUIZ (config + play, also used by Daily) ============ -->
+  <section id="scr-quiz" class="screen">
+    <button class="back" onclick="goHome()">← Sound ID</button>
+
+    <div id="quizConfig">
+      <div class="masthead"><h1 style="font-size:26px">Quiz<span class="dot">.</span></h1></div>
+      <p class="lead">Set it up, then start.</p>
+      <div class="card pad">
+        <div class="cfg-label">Difficulty</div>
+        <div class="seg" id="modeSeg">
+          <button data-mode="all" class="on">All species<small>Every European bird — hardest</small></button>
+          <button data-mode="region">Region &amp; season<small>Common birds only — easier</small></button>
+        </div>
+        <div id="regionOpts" style="display:none">
+          <div class="cfg-label">Where &amp; when</div>
+          <div class="selrow">
+            <div class="sel"><label>Region</label><select id="regionSel"><option value="Europe" selected>Europe</option></select></div>
+            <div class="sel"><label>Season</label><select id="seasonSel">
+              <option value="any" selected>Any</option><option value="spring">Spring</option>
+              <option value="summer">Summer</option><option value="autumn">Autumn</option><option value="winter">Winter</option>
+            </select></div>
+          </div>
+        </div>
+        <div class="cfg-label">Families <button class="allbtn" id="famAll">clear all</button></div>
+        <div class="chips" id="famFilter"></div>
+        <button class="startbtn" id="startBtn">Start quiz</button>
+        <div class="poolnote" id="poolNote"></div>
+      </div>
+    </div>
+
+    <div id="quizPlay" style="display:none">
+      <div class="card pad">
+        <div class="ctxbar">
+          <span class="ctx" id="ctxLabel"></span>
+          <span class="score" id="scoreOut" title="points">0</span>
+        </div>
+        <div class="scope"><canvas id="scope" width="900" height="300"></canvas><div class="status mono" id="scopeStatus">press play</div></div>
+        <div class="playrow">
+          <button class="play" id="playBtn" aria-label="Play or pause"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+          <div class="attrib" id="clipNote"></div>
+        </div>
+        <div class="typerow"><input id="typeInput" placeholder="Type the species name…" autocomplete="off" spellcheck="false" /><button class="checkbtn" id="checkBtn">Check</button></div>
+        <div class="altlinks">
+          <button id="famToggle">Only know the family? <span class="halfnote">+½</span></button>
+          <button id="dontKnow">Reveal — I don't know</button>
+        </div>
+        <div class="famans" id="famAns"><span class="hint">Pick the family for half points:</span></div>
+        <div class="reveal" id="reveal"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="nextbtn" id="nextWrap"><button id="nextBtn">Next bird</button></div>
+        <div class="daily-done" id="dailyDone" style="display:none"></div>
+      </div>
+      <p style="text-align:center;margin-top:14px"><button class="link" id="reconfig" style="background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-family:inherit;font-size:12.5px">change quiz settings</button></p>
+    </div>
+  </section>
+
+  <!-- ============ LEARN ============ -->
+  <section id="scr-learn" class="screen">
+    <button class="back" onclick="goHome()">← Sound ID</button>
+    <div class="masthead"><h1 style="font-size:26px">Learn<span class="dot">.</span></h1></div>
+    <p class="lead">Every European species — tap play to stream its sound.</p>
+    <input class="search" id="learnSearch" placeholder="Search by name, family or scientific name…" autocomplete="off" />
+    <div class="learnbar" id="learnBar"></div>
+    <div class="learnlist" id="learnList"></div>
+  </section>
+
 </div>
 
 <audio id="player" preload="none"></audio>
 
 <script>
-/* ============================================================================
-   DAWN CHORUS — region + taxonomic-family birdsong trainer
-   ========================================================================== */
-
-/* Linnaean family -> friendly English label (taxonomy shown on reveal). */
+/* ================= data ================= */
 const FAMILY_LABELS = {Anatidae:"Ducks, geese & swans", Phasianidae:"Pheasants, grouse & allies", Podicipedidae:"Grebes", Columbidae:"Pigeons & doves", Cuculidae:"Cuckoos", Apodidae:"Swifts", Caprimulgidae:"Nightjars", Rallidae:"Rails, crakes & coots", Gruidae:"Cranes", Otididae:"Bustards", Haematopodidae:"Oystercatchers", Recurvirostridae:"Stilts & avocets", Burhinidae:"Stone-curlews", Charadriidae:"Plovers & lapwings", Scolopacidae:"Sandpipers, snipe & curlews", Laridae:"Gulls & terns", Alcidae:"Auks", Gaviidae:"Loons", Procellariidae:"Shearwaters & petrels", Hydrobatidae:"Storm-petrels", Sulidae:"Gannets", Phalacrocoracidae:"Cormorants & shags", Ciconiidae:"Storks", Threskiornithidae:"Ibises & spoonbills", Ardeidae:"Herons, egrets & bitterns", Pandionidae:"Osprey", Accipitridae:"Hawks, kites, eagles & vultures", Falconidae:"Falcons", Tytonidae:"Barn owls", Strigidae:"Owls", Upupidae:"Hoopoes", Coraciidae:"Rollers", Meropidae:"Bee-eaters", Alcedinidae:"Kingfishers", Picidae:"Woodpeckers", Oriolidae:"Orioles", Laniidae:"Shrikes", Corvidae:"Crows, jays & allies", Paridae:"Tits", Panuridae:"Bearded reedling", Remizidae:"Penduline-tits", Alaudidae:"Larks", Hirundinidae:"Swallows & martins", Aegithalidae:"Long-tailed tits", Phylloscopidae:"Leaf warblers", Acrocephalidae:"Reed & marsh warblers", Locustellidae:"Grassbird warblers", Cisticolidae:"Cisticolas", Sylviidae:"Sylviid warblers", Regulidae:"Kinglets", Troglodytidae:"Wrens", Sittidae:"Nuthatches", Tichodromidae:"Wallcreeper", Certhiidae:"Treecreepers", Sturnidae:"Starlings", Cinclidae:"Dippers", Turdidae:"Thrushes", Muscicapidae:"Chats & flycatchers", Passeridae:"Old-World sparrows", Prunellidae:"Accentors", Motacillidae:"Wagtails & pipits", Fringillidae:"Finches", Emberizidae:"Buntings"};
-
-/* [ English, German (Europe only, else ""), Scientific, Region, Family ] */
 const RAW = [
-  ["Greylag Goose","","Anser anser","Europe","Anatidae"],
+["Greylag Goose","","Anser anser","Europe","Anatidae"],
   ["Greater White-fronted Goose","","Anser albifrons","Europe","Anatidae"],
   ["Barnacle Goose","","Branta leucopsis","Europe","Anatidae"],
   ["Brant Goose","","Branta bernicla","Europe","Anatidae"],
@@ -438,259 +520,229 @@ const RAW = [
   ["Ortolan Bunting","","Emberiza hortulana","Europe","Emberizidae"],
   ["Reed Bunting","","Emberiza schoeniclus","Europe","Emberizidae"],
 ];
-const SPECIES = RAW.map((r,i)=>({ id:i, en:r[0], de:r[1], sci:r[2], reg:r[3], fam:r[4],
-  xcId:null, rec:null, lic:null, ref:null, hasReal:false }));
-const famLabel = f => FAMILY_LABELS[f] || f;
-
-/* ---- Answer matching ---- */
-const STRIP=/^(common|eurasian|european|northern|southern|american|australian|african|oriental|greater|lesser)\s+/;
-const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-                .replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
-function acceptedNames(s){
-  const set=new Set([norm(s.en), norm(s.sci)]);
-  if(s.de) set.add(norm(s.de));
-  const short=norm(s.en).replace(STRIP,''); if(short) set.add(short);
-  return set;
-}
-const speciesMatches=(typed,s)=>acceptedNames(s).has(norm(typed));
-
-/* ---- SRS (Leitner), no frequency/season ---- */
-const INTERVAL={0:0,1:1,2:3,3:6,4:12,5:24};
-const POINTS={full:10,half:5,miss:0};
-const state={
-  region:"Europe",
-  step:0, score:0, current:null, mediaReal:false, recent:[],
-  enabled:new Set(),                 // enabled families for current region
-  cards:SPECIES.map(s=>({id:s.id,box:0,due:0,seen:false})),
-};
-const card=id=>state.cards.find(c=>c.id===id);
-const inScope=id=>SPECIES[id].reg===state.region && state.enabled.has(SPECIES[id].fam);
-const regionFamilies=()=>[...new Set(SPECIES.filter(s=>s.reg===state.region).map(s=>s.fam))]
-                          .sort((a,b)=>famLabel(a).localeCompare(famLabel(b)));
-const deck=()=>state.cards.filter(c=>inScope(c.id));
-
-function pickNext(){
-  const d=deck(); if(!d.length) return null;
-  return d[Math.floor(Math.random()*d.length)].id;   // pure random, repeats allowed
-}
-function schedule(id,outcome){
-  const c=card(id); c.seen=true; state.step++;
-  if(outcome==='full') c.box=Math.min(c.box+1,5);
-  else if(outcome==='half') c.box=Math.max(c.box,1);
-  else c.box=1;
-  const iv=outcome==='half'?Math.max(1,Math.floor(INTERVAL[c.box]/2)):INTERVAL[c.box];
-  c.due=state.step+iv; state.score+=POINTS[outcome];
-  el('score').textContent=state.score;
-}
-
-/* ---- Audio: live CC recordings via GBIF, synth fallback ---- */
-const XC_DATASET="b1047888-ae52-4179-9dd5-5448ea342a24";
-const recCache=new Map();
-const licShort=u=>{ if(!u) return 'CC'; const m=u.match(/licenses\/([a-z-]+)/i); return m?('CC-'+m[1].toUpperCase()):'CC'; };
-async function fetchRecordingLive(id){
-  if(recCache.has(id)) return recCache.get(id);
-  const sci=SPECIES[id].sci;
-  try{
-    const url=`https://api.gbif.org/v1/occurrence/search?datasetKey=${XC_DATASET}`
-             +`&scientificName=${encodeURIComponent(sci)}&mediaType=Sound&limit=40`;
-    const data=await (await fetch(url)).json();
-    const cands=[];
-    for(const r of (data.results||[])){
-      for(const m of (r.media||[])){
-        const isSound=(m.type==='Sound')||/audio/i.test(m.format||'');
-        const lic=m.license||r.license||'';
-        if(isSound && m.identifier && /creativecommons/i.test(lic)){
-          cands.push({ audioUrl:m.identifier, ref:m.references||'',
-            rec:m.creator||m.rightsHolder||r.recordedBy||'unknown recordist', lic:licShort(lic) });
-        }
-      }
-    }
-    const pick=cands.length?cands[Math.floor(Math.random()*Math.min(cands.length,15))]:null;
-    recCache.set(id,pick); return pick;
-  }catch(e){ recCache.set(id,null); return null; }
-}
-let actx,analyser,freqData,rafId,playingSynth=false;
-const player=document.getElementById('player');
-function ensureCtx(){
-  if(!actx){ actx=new (window.AudioContext||window.webkitAudioContext)();
-    analyser=actx.createAnalyser(); analyser.fftSize=256; freqData=new Uint8Array(analyser.frequencyBinCount); }
-  if(actx.state==='suspended') actx.resume();
-}
-function updateClipNote(id){
-  const s=SPECIES[id];
-  el('clipNote').innerHTML = s.hasReal
-    ? `Recording by <strong>${s.rec}</strong> · <span class="lic">${s.lic}</span>`
-      +(s.ref?` · <a href="${s.ref}" target="_blank" rel="noopener">Xeno-canto ↗</a>`:'')
-    : `Creative-Commons recording via Xeno-canto / GBIF.`;
-}
-async function playClip(id){
-  if(id==null) return;
-  ensureCtx(); stopAudio(); setStatus('finding a recording…');
-  const rec=await fetchRecordingLive(id);
-  if(state.current!==id) return;
-  if(rec && rec.audioUrl){
-    const s=SPECIES[id]; s.rec=rec.rec; s.lic=rec.lic; s.ref=rec.ref; s.hasReal=true;
-    state.mediaReal=true; updateClipNote(id);
-    player.src=rec.audioUrl;
-    player.play().then(()=>{ setStatus('streaming · xeno-canto via gbif'); animateStylised(id); })
-                 .catch(()=>{ setStatus('clip blocked — playing tone'); synth(id); });
-  } else { state.mediaReal=false; SPECIES[id].hasReal=false; updateClipNote(id); synth(id); }
-}
-function togglePlay(){
-  if(state.current==null) return;
-  ensureCtx();
-  if(state.mediaReal && !player.ended && player.src){
-    if(player.paused){ player.play().then(()=>animateStylised(state.current)).catch(()=>{}); }
-    else player.pause();
-    return;
-  }
-  playClip(state.current);
-}
-function synth(id){
-  playingSynth=true; setStatus('demo tone'); setPlayIcon(true);
-  const t0=actx.currentTime, base=1500+((id*197)%2500), notes=3+(id%4), trill=id%3===0;
-  const master=actx.createGain(); master.gain.value=1; master.connect(actx.destination); master.connect(analyser);
-  for(let n=0;n<notes;n++){
-    const o=actx.createOscillator(), g=actx.createGain();
-    o.type=trill?'triangle':'sine';
-    const start=t0+n*0.22, f=base*(1+0.12*Math.sin(n*1.7+id));
-    o.frequency.setValueAtTime(f,start);
-    o.frequency.linearRampToValueAtTime(f*(trill?1.4:1.08),start+0.18);
-    g.gain.setValueAtTime(.0001,start);
-    g.gain.exponentialRampToValueAtTime(.16,start+0.02);
-    g.gain.exponentialRampToValueAtTime(.0001,start+0.2);
-    o.connect(g); g.connect(master); o.start(start); o.stop(start+0.22);
-  }
-  drawFromAnalyser();
-  setTimeout(()=>{ if(playingSynth){ stopAudio(); setStatus('done'); setPlayIcon(false); } }, notes*230+150);
-}
-function stopAudio(){ playingSynth=false; cancelAnimationFrame(rafId); try{player.pause();}catch(e){} }
-
-/* ---- Play/pause icon ---- */
-const PLAY_SVG='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
-const PAUSE_SVG='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
-const setPlayIcon=on=>{ el('playBtn').innerHTML=on?PAUSE_SVG:PLAY_SVG; };
-player.addEventListener('play',()=>setPlayIcon(true));
-player.addEventListener('pause',()=>setPlayIcon(false));
-
-/* ---- Spectrogram ---- */
-const cv=document.getElementById('scope'), cx=cv.getContext('2d');
-cx.fillStyle='#0c1817'; cx.fillRect(0,0,cv.width,cv.height);
-function paintColumn(vals){
-  const w=cv.width,h=cv.height,colW=3;
-  const img=cx.getImageData(colW,0,w-colW,h); cx.putImageData(img,0,0);
-  cx.fillStyle='#0c1817'; cx.fillRect(w-colW,0,colW,h);
-  for(let i=0;i<vals.length;i++){ const v=vals[i]/255; if(v<0.04) continue;
-    const y=h-(i/vals.length)*h; cx.fillStyle=`rgba(240,182,74,${Math.min(1,v*1.4)})`; cx.fillRect(w-colW,y-2,colW,3); }
-}
-function drawFromAnalyser(){ analyser.getByteFrequencyData(freqData); paintColumn(freqData); rafId=requestAnimationFrame(drawFromAnalyser); }
-function animateStylised(id){
-  const seed=id*13.7;
-  const tick=()=>{ const t=player.currentTime||0, col=new Uint8Array(64);
-    for(let i=0;i<64;i++){ const band=Math.sin(i*0.35+t*9+seed)*Math.sin(i*0.11+t*3);
-      col[i]=Math.max(0,band)*255*(0.5+0.5*Math.sin(t*6+seed)); }
-    paintColumn(col); if(!player.paused && !player.ended) rafId=requestAnimationFrame(tick); };
-  tick();
-}
-player.addEventListener('ended',()=>{ cancelAnimationFrame(rafId); setStatus('done'); setPlayIcon(false); });
-player.addEventListener('error',()=>{ if(state.current!=null && state.mediaReal){ setStatus('clip error — tone'); synth(state.current); }});
-const setStatus=t=>el('scopeStatus').textContent=t;
-
-/* ---- Rendering ---- */
+const COMMON = {"Anas platyrhynchos":"R","Cygnus olor":"R","Columba palumbus":"R","Columba livia":"R","Columba oenas":"R","Streptopelia decaocto":"R","Buteo buteo":"R","Accipiter nisus":"R","Falco tinnunculus":"R","Milvus milvus":"R","Strix aluco":"R","Bubo bubo":"R","Dendrocopos major":"R","Picus viridis":"R","Dryocopus martius":"R","Garrulus glandarius":"R","Pica pica":"R","Coloeus monedula":"R","Corvus frugilegus":"R","Corvus corone":"R","Corvus cornix":"R","Corvus corax":"R","Periparus ater":"R","Poecile palustris":"R","Lophophanes cristatus":"R","Cyanistes caeruleus":"R","Parus major":"R","Aegithalos caudatus":"R","Alauda arvensis":"R","Troglodytes troglodytes":"R","Sitta europaea":"R","Certhia familiaris":"R","Certhia brachydactyla":"R","Sturnus vulgaris":"R","Turdus merula":"R","Turdus viscivorus":"R","Turdus philomelos":"R","Erithacus rubecula":"R","Phoenicurus ochruros":"R","Saxicola rubicola":"R","Passer domesticus":"R","Passer montanus":"R","Prunella modularis":"R","Motacilla cinerea":"R","Motacilla alba":"R","Fringilla coelebs":"R","Chloris chloris":"R","Carduelis carduelis":"R","Spinus spinus":"R","Linaria cannabina":"R","Pyrrhula pyrrhula":"R","Coccothraustes coccothraustes":"R","Emberiza citrinella":"R","Emberiza schoeniclus":"R","Serinus serinus":"R","Tachybaptus ruficollis":"R","Podiceps cristatus":"R","Ardea cinerea":"R","Phalacrocorax carbo":"R","Fulica atra":"R","Gallinula chloropus":"R","Rallus aquaticus":"R","Vanellus vanellus":"R","Phasianus colchicus":"R","Perdix perdix":"R","Alcedo atthis":"R","Athene noctua":"R","Cinclus cinclus":"R","Regulus regulus":"R","Regulus ignicapilla":"R","Anser anser":"R","Larus argentatus":"R","Chroicocephalus ridibundus":"R","Ardea alba":"R","Cuculus canorus":"S","Apus apus":"S","Streptopelia turtur":"S","Hirundo rustica":"S","Delichon urbicum":"S","Riparia riparia":"S","Phylloscopus trochilus":"S","Phylloscopus collybita":"S","Phylloscopus sibilatrix":"S","Acrocephalus schoenobaenus":"S","Acrocephalus scirpaceus":"S","Acrocephalus arundinaceus":"S","Acrocephalus palustris":"S","Curruca communis":"S","Curruca curruca":"S","Sylvia atricapilla":"S","Sylvia borin":"S","Luscinia megarhynchos":"S","Phoenicurus phoenicurus":"S","Saxicola rubetra":"S","Oenanthe oenanthe":"S","Muscicapa striata":"S","Ficedula hypoleuca":"S","Anthus trivialis":"S","Anthus pratensis":"R","Motacilla flava":"S","Locustella naevia":"S","Merops apiaster":"S","Upupa epops":"S","Oriolus oriolus":"S","Lanius collurio":"S","Ciconia ciconia":"S","Jynx torquilla":"S","Turdus pilaris":"W","Turdus iliacus":"W","Fringilla montifringilla":"W","Cygnus cygnus":"W","Branta leucopsis":"W","Anser albifrons":"W","Mareca penelope":"W","Anas crecca":"W","Bucephala clangula":"W","Mergus merganser":"W"};
+const SEASONS = {R:['spring','summer','autumn','winter'], S:['spring','summer'], W:['autumn','winter']};
+const SPECIES = RAW.map((r,i)=>({id:i,en:r[0],de:r[1],sci:r[2],reg:r[3],fam:r[4],
+  common:(r[2] in COMMON), status:(COMMON[r[2]]||'R'),
+  xcId:null,rec:null,lic:null,ref:null,hasReal:false}));
+const famLabel=f=>FAMILY_LABELS[f]||f;
+const ALL_FAMS=[...new Set(SPECIES.map(s=>s.fam))].sort((a,b)=>famLabel(a).localeCompare(famLabel(b)));
 const el=id=>document.getElementById(id);
 
-function renderFilters(){
-  const box=el('filters');
-  box.querySelectorAll('.chip,.allbtn').forEach(n=>n.remove());
-  regionFamilies().forEach(f=>{
-    const b=document.createElement('button');
-    b.className='chip'+(state.enabled.has(f)?' on':'');
-    b.textContent=famLabel(f); b.title=f;
-    b.onclick=()=>{ state.enabled.has(f)?state.enabled.delete(f):state.enabled.add(f); afterScopeChange(); };
-    box.appendChild(b);
-  });
-  const fams=regionFamilies();
-  const all=document.createElement('button'); all.className='allbtn';
-  all.textContent = state.enabled.size===fams.length ? 'clear all' : 'select all';
-  all.onclick=()=>{ if(state.enabled.size===fams.length) state.enabled.clear(); else fams.forEach(f=>state.enabled.add(f)); afterScopeChange(); };
-  box.appendChild(all);
+/* ================= matching ================= */
+const STRIP=/^(common|eurasian|european|northern|southern|american|australian|african|oriental|greater|lesser|western|eastern)\s+/;
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+function accepted(s){const set=new Set([norm(s.en),norm(s.sci)]);if(s.de)set.add(norm(s.de));const sh=norm(s.en).replace(STRIP,'');if(sh)set.add(sh);return set;}
+const matches=(t,s)=>accepted(s).has(norm(t));
+
+/* ================= state ================= */
+const state={mode:'all',season:'any',enabled:new Set(ALL_FAMS),
+  ctx:'quiz',           // 'quiz' | 'daily'
+  current:null,score:0,mediaReal:false,dailyDone:false};
+
+/* ================= navigation (each opens a new window) ================= */
+function openScreen(name){
+  const url=location.pathname+location.search+'#'+name;
+  const w=window.open(url,'_blank');
+  if(!w){ location.hash=name; }   // popup blocked -> same tab
 }
-function renderFamAnswerChips(){
-  const box=el('famchips');
-  box.querySelectorAll('.chip').forEach(n=>n.remove());
-  regionFamilies().filter(f=>state.enabled.has(f)).forEach(f=>{
-    const b=document.createElement('button'); b.className='chip mini'; b.textContent=famLabel(f); b.title=f;
-    b.onclick=()=>commit('half',f); box.appendChild(b);
-  });
+function goHome(){ location.hash='home'; }
+function setScreen(name){
+  ['home','quiz','learn'].forEach(s=>el('scr-'+s).classList.toggle('on', s===(name==='daily'?'quiz':name)));
+  window.scrollTo(0,0);
+}
+function applyHash(){
+  stopAudio();
+  const h=(location.hash||'#home').slice(1);
+  if(h==='daily'){ setScreen('quiz'); enterDaily(); }
+  else if(h==='quiz'){ setScreen('quiz'); enterQuiz(); }
+  else if(h==='learn'){ setScreen('learn'); renderLearn(); }
+  else setScreen('home');
+}
+window.addEventListener('hashchange',applyHash);
+window.addEventListener('DOMContentLoaded',()=>{ buildFamFilter(); applyHash(); });
+
+/* ================= pool ================= */
+function pool(){
+  let list=SPECIES.filter(s=>state.enabled.has(s.fam));
+  if(state.mode==='region') list=list.filter(s=>s.common && (state.season==='any'||SEASONS[s.status].includes(state.season)));
+  return list;
 }
 
-function renderStudy(){
-  const id=state.current;
-  el('reveal').className='reveal'; el('reveal').innerHTML='';
-  el('feedback').innerHTML=''; el('famchips').className='famchips'; el('nextBtn').disabled=true;
-  setPlayIcon(false);
+/* ================= quiz config ================= */
+function buildFamFilter(){
+  const box=el('famFilter'); box.innerHTML='';
+  ALL_FAMS.forEach(f=>{ const b=document.createElement('button');
+    b.className='chip'+(state.enabled.has(f)?' on':''); b.textContent=famLabel(f); b.title=f;
+    b.onclick=()=>{ state.enabled.has(f)?state.enabled.delete(f):state.enabled.add(f); b.classList.toggle('on'); updatePoolNote(); };
+    box.appendChild(b); });
+}
+el('famAll').onclick=()=>{ if(state.enabled.size===ALL_FAMS.length) state.enabled.clear(); else state.enabled=new Set(ALL_FAMS);
+  el('famAll').textContent=state.enabled.size===ALL_FAMS.length?'clear all':'select all'; buildFamFilter(); updatePoolNote(); };
+el('modeSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  state.mode=b.dataset.mode; el('modeSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  el('regionOpts').style.display=state.mode==='region'?'block':'none'; updatePoolNote(); });
+el('seasonSel').onchange=e=>{ state.season=e.target.value; updatePoolNote(); };
+function updatePoolNote(){ el('poolNote').textContent=pool().length+' species in this quiz'; el('startBtn').disabled=pool().length===0; }
+function enterQuiz(){ state.ctx='quiz'; el('quizConfig').style.display='block'; el('quizPlay').style.display='none'; buildFamFilter(); updatePoolNote(); }
+el('startBtn').onclick=()=>{ state.ctx='quiz'; el('quizConfig').style.display='none'; el('quizPlay').style.display='block';
+  el('nextWrap').style.display='block'; el('reconfig').style.display=''; el('dailyDone').style.display='none'; state.score=0; el('scoreOut').textContent='0';
+  buildFamAns(); nextBird(); };
+el('reconfig').onclick=enterQuiz;
 
-  if(id==null){
-    el('studyBody').querySelectorAll('.scope,.playrow,.typerow,.altlinks').forEach(n=>n.style.display='none');
-    let e=el('emptyMsg'); if(!e){ e=document.createElement('div'); e.id='emptyMsg'; e.className='empty'; el('studyBody').appendChild(e); }
-    e.style.display='block'; e.textContent=state.enabled.size?'No birds match — adjust the family filter.':'Pick at least one family to train.';
-    return;
-  }
-  if(el('emptyMsg')) el('emptyMsg').style.display='none';
-  el('studyBody').querySelector('.scope').style.display='';
-  el('studyBody').querySelector('.playrow').style.display='flex';
-  el('studyBody').querySelector('.typerow').style.display='flex';
-  el('studyBody').querySelector('.altlinks').style.display='flex';
+/* ================= daily ================= */
+function enterDaily(){
+  state.ctx='daily'; state.mode='all';
+  el('quizConfig').style.display='none'; el('quizPlay').style.display='block';
+  el('nextWrap').style.display='none'; el('reconfig').style.display='none'; el('dailyDone').style.display='none';
+  el('scoreOut').textContent=state.score;
+  buildFamAns();
+  const day=Math.floor(Date.now()/86400000);
+  let x=(day*2654435761)%SPECIES.length; if(x<0)x+=SPECIES.length;
+  state.current=x; state.dailyDone=false;
+  el('ctxLabel').textContent='SOUND OF THE DAY · '+new Date().toLocaleDateString();
+  renderQuestion(); playClip(state.current);
+}
 
-  const s=SPECIES[id];
-  el('clipNote').innerHTML = s.hasReal ? '' : `Press play to stream a Creative-Commons recording.`;
-  if(s.hasReal) updateClipNote(id);
+/* ================= family-answer chips ================= */
+function buildFamAns(){
+  const box=el('famAns'); box.querySelectorAll('.chip').forEach(n=>n.remove());
+  const fams=[...new Set(pool().map(s=>s.fam))].sort((a,b)=>famLabel(a).localeCompare(famLabel(b)));
+  (fams.length?fams:ALL_FAMS).forEach(f=>{ const b=document.createElement('button'); b.className='chip mini'; b.textContent=famLabel(f); b.title=f;
+    b.onclick=()=>commit('half',f); box.appendChild(b); });
+}
+
+/* ================= question flow ================= */
+function nextBird(){ const p=pool(); if(!p.length) return; state.current=p[Math.floor(Math.random()*p.length)].id;
+  el('ctxLabel').textContent=(state.mode==='all'?'ALL SPECIES':'REGION · '+state.season.toUpperCase())+' · '+pool().length+' birds';
+  renderQuestion(); playClip(state.current); }
+function renderQuestion(){
+  const s=SPECIES[state.current];
+  el('reveal').className='reveal'; el('reveal').innerHTML=''; el('feedback').innerHTML=''; el('famAns').className='famans';
+  el('clipNote').innerHTML = s.hasReal ? updateClipHTML(s) : 'Press play to stream a Creative-Commons recording.';
   const inp=el('typeInput'); inp.value=''; inp.disabled=false; el('checkBtn').disabled=false;
-  setTimeout(()=>inp.focus(),0);
+  setPlayIcon(false); setTimeout(()=>inp.focus(),0);
 }
-
-function commit(outcome, chosenFam){
-  const id=state.current, s=SPECIES[id];
-  let result=outcome;
-  if(outcome==='full'){ const t=el('typeInput').value.trim(); if(!t) return; result=speciesMatches(t,s)?'full':'miss'; }
-  else if(outcome==='half'){ result=(chosenFam===s.fam)?'half':'miss'; }
-  schedule(id,result);
-  el('typeInput').disabled=true; el('checkBtn').disabled=true; el('famchips').className='famchips';
-
-  const cls=result==='full'?'full':result==='half'?'half':'miss';
-  const label=`+${POINTS[result]}`;
+function commit(outcome,fam){
+  const s=SPECIES[state.current]; let res=outcome;
+  if(outcome==='full'){ const t=el('typeInput').value.trim(); if(!t) return; res=matches(t,s)?'full':'miss'; }
+  else if(outcome==='half'){ res=(fam===s.fam)?'half':'miss'; }
+  const pts={full:10,half:5,miss:0}[res]; state.score+=pts; el('scoreOut').textContent=state.score;
+  el('typeInput').disabled=true; el('checkBtn').disabled=true; el('famAns').className='famans';
+  const cls=res==='full'?'full':res==='half'?'half':'miss';
   el('reveal').className='reveal show';
-  el('reveal').innerHTML=`<div class="bird">${s.en}<span class="points ${cls}">${label}</span></div>
-    <div class="meta">${s.de?s.de+' · ':''}${s.sci}</div>
-    <div class="grp">${famLabel(s.fam)} · ${s.fam}</div>`;
+  el('reveal').innerHTML='<div class="bird">'+s.en+'<span class="points '+cls+'">+'+pts+'</span></div>'+
+    '<div class="meta">'+(s.de?s.de+' · ':'')+s.sci+'</div><div class="grp">'+famLabel(s.fam)+' · '+s.fam+'</div>';
   const fb=el('feedback');
-  if(result==='full') fb.innerHTML=`<span class="ok">Full marks — species nailed.</span>`;
-  else if(result==='half') fb.innerHTML=`<span class="part">Right family, half marks. It was the ${s.en}.</span>`;
-  else if(outcome==='full') fb.innerHTML=`<span class="no">Not quite — it was the ${s.en}.</span>`;
-  else if(outcome==='half') fb.innerHTML=`<span class="no">Wrong family — it's ${famLabel(s.fam)}. Comes back soon.</span>`;
-  else fb.innerHTML=`<span class="no">It was the ${s.en} — ${famLabel(s.fam)}. Back in rotation.</span>`;
-  el('nextBtn').disabled=false;
+  if(res==='full') fb.innerHTML='<span class="ok">Full marks — species nailed.</span>';
+  else if(res==='half') fb.innerHTML='<span class="part">Right family, half marks. It was the '+s.en+'.</span>';
+  else if(outcome==='full') fb.innerHTML='<span class="no">Not quite — it was the '+s.en+'.</span>';
+  else if(outcome==='half') fb.innerHTML='<span class="no">Wrong family — it is '+famLabel(s.fam)+'.</span>';
+  else fb.innerHTML='<span class="no">It was the '+s.en+' — '+famLabel(s.fam)+'.</span>';
+  if(state.ctx==='daily'){ state.dailyDone=true; el('dailyDone').style.display='block';
+    el('dailyDone').textContent='That is today\u2019s bird. Come back tomorrow for a new one.'; }
 }
-
-/* ---- Flow ---- */
-function nextBird(){ state.current=pickNext(); renderStudy(); playClip(state.current); }
-function afterScopeChange(){ renderFilters(); renderFamAnswerChips(); state.recent=[];
-  if(state.current==null || !inScope(state.current)) state.current=pickNext();
-  renderStudy();
-}
-el('playBtn').onclick=togglePlay;
-el('nextBtn').onclick=nextBird;
 el('checkBtn').onclick=()=>commit('full');
-el('typeInput').addEventListener('keydown',e=>{ if(e.key==='Enter' && !el('checkBtn').disabled) commit('full'); });
-el('famToggle').onclick=()=>el('famchips').classList.toggle('show');
+el('typeInput').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!el('checkBtn').disabled) commit('full'); });
+el('famToggle').onclick=()=>el('famAns').classList.toggle('show');
 el('dontKnow').onclick=()=>commit('miss');
-el('region').onchange=e=>{ state.region=e.target.value; state.enabled=new Set(regionFamilies()); state.current=null; afterScopeChange(); };
+el('nextBtn').onclick=nextBird;
 
-/* boot */
-state.region=el('region').value;
-state.enabled=new Set(regionFamilies());
-renderFilters(); renderFamAnswerChips();
-state.current=pickNext(); renderStudy();
+/* ================= audio (shared) ================= */
+const XC_DATASET="b1047888-ae52-4179-9dd5-5448ea342a24";
+const recCache=new Map();
+const licShort=u=>{if(!u)return'CC';const m=u.match(/licenses\/([a-z-]+)/i);return m?('CC-'+m[1].toUpperCase()):'CC';};
+async function fetchRec(id){
+  if(recCache.has(id))return recCache.get(id);
+  try{
+    const url='https://api.gbif.org/v1/occurrence/search?datasetKey='+XC_DATASET+'&scientificName='+encodeURIComponent(SPECIES[id].sci)+'&mediaType=Sound&limit=40';
+    const data=await(await fetch(url)).json();
+    const c=[];
+    for(const r of (data.results||[])) for(const m of (r.media||[])){
+      const snd=(m.type==='Sound')||/audio/i.test(m.format||''); const lic=m.license||r.license||'';
+      if(snd&&m.identifier&&/creativecommons/i.test(lic)) c.push({audioUrl:m.identifier,ref:m.references||'',rec:m.creator||m.rightsHolder||r.recordedBy||'unknown recordist',lic:licShort(lic)});
+    }
+    const p=c.length?c[Math.floor(Math.random()*Math.min(c.length,15))]:null; recCache.set(id,p); return p;
+  }catch(e){ recCache.set(id,null); return null; }
+}
+const player=el('player');
+let actx,analyser,freqData,rafId,playingSynth=false, audioMode='quiz';
+function ensureCtx(){ if(!actx){actx=new(window.AudioContext||window.webkitAudioContext)();analyser=actx.createAnalyser();analyser.fftSize=256;freqData=new Uint8Array(analyser.frequencyBinCount);} if(actx.state==='suspended')actx.resume(); }
+function updateClipHTML(s){ return 'Recording by <strong>'+s.rec+'</strong> · <span class="lic">'+s.lic+'</span>'+(s.ref?' · <a href="'+s.ref+'" target="_blank" rel="noopener">Xeno-canto \u2197</a>':''); }
+function setStatus(t){ const e=el('scopeStatus'); if(e)e.textContent=t; }
+
+async function playClip(id){ // quiz/daily card
+  if(id==null)return; audioMode='quiz'; ensureCtx(); stopAudio(); setStatus('finding a recording…');
+  const rec=await fetchRec(id); if(state.current!==id)return;
+  const s=SPECIES[id];
+  if(rec&&rec.audioUrl){ s.rec=rec.rec;s.lic=rec.lic;s.ref=rec.ref;s.hasReal=true; state.mediaReal=true;
+    el('clipNote').innerHTML=updateClipHTML(s); player.src=rec.audioUrl;
+    player.play().then(()=>{setStatus('streaming · xeno-canto via gbif');animate(id);}).catch(()=>{setStatus('clip blocked — tone');synth(id);});
+  } else { state.mediaReal=false; s.hasReal=false; el('clipNote').innerHTML='No clip found — playing a tone.'; synth(id); }
+}
+function togglePlay(){ if(state.current==null)return; ensureCtx();
+  if(state.mediaReal&&!player.ended&&player.src){ if(player.paused)player.play().then(()=>animate(state.current)).catch(()=>{}); else player.pause(); return; }
+  playClip(state.current); }
+function synth(id){ playingSynth=true; setStatus('demo tone'); setPlayIcon(true);
+  const t0=actx.currentTime,base=1500+((id*197)%2500),notes=3+(id%4),trill=id%3===0;
+  const master=actx.createGain(); master.gain.value=1; master.connect(actx.destination); master.connect(analyser);
+  for(let n=0;n<notes;n++){ const o=actx.createOscillator(),g=actx.createGain(); o.type=trill?'triangle':'sine';
+    const st=t0+n*0.22,f=base*(1+0.12*Math.sin(n*1.7+id)); o.frequency.setValueAtTime(f,st); o.frequency.linearRampToValueAtTime(f*(trill?1.4:1.08),st+0.18);
+    g.gain.setValueAtTime(.0001,st);g.gain.exponentialRampToValueAtTime(.16,st+0.02);g.gain.exponentialRampToValueAtTime(.0001,st+0.2);
+    o.connect(g);g.connect(master);o.start(st);o.stop(st+0.22);} drawAnalyser();
+  setTimeout(()=>{ if(playingSynth){stopAudio();setStatus('done');setPlayIcon(false);} },notes*230+150); }
+function stopAudio(){ playingSynth=false; cancelAnimationFrame(rafId); try{player.pause();}catch(e){} }
+
+/* play/pause icon */
+const PLAY_SVG='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>', PAUSE_SVG='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+const setPlayIcon=on=>{ const b=el('playBtn'); if(b&&audioMode==='quiz')b.innerHTML=on?PAUSE_SVG:PLAY_SVG; };
+player.addEventListener('play',()=>{ if(audioMode==='quiz')setPlayIcon(true); });
+player.addEventListener('pause',()=>{ if(audioMode==='quiz')setPlayIcon(false); });
+player.addEventListener('ended',()=>{ cancelAnimationFrame(rafId); if(audioMode==='quiz'){setStatus('done');setPlayIcon(false);} else clearLearnPlaying(); });
+player.addEventListener('error',()=>{ if(audioMode==='quiz'&&state.mediaReal){setStatus('clip error — tone');synth(state.current);} });
+el('playBtn').onclick=togglePlay;
+
+/* spectrogram */
+const cv=el('scope'),cx=cv.getContext('2d'); cx.fillStyle='#0c1817';cx.fillRect(0,0,cv.width,cv.height);
+function paint(vals){ if(audioMode!=='quiz')return; const w=cv.width,h=cv.height,cw=3; const img=cx.getImageData(cw,0,w-cw,h);cx.putImageData(img,0,0);
+  cx.fillStyle='#0c1817';cx.fillRect(w-cw,0,cw,h);
+  for(let i=0;i<vals.length;i++){const v=vals[i]/255;if(v<0.04)continue;const y=h-(i/vals.length)*h;cx.fillStyle='rgba(240,182,74,'+Math.min(1,v*1.4)+')';cx.fillRect(w-cw,y-2,cw,3);} }
+function drawAnalyser(){ analyser.getByteFrequencyData(freqData); paint(freqData); rafId=requestAnimationFrame(drawAnalyser); }
+function animate(id){ const seed=id*13.7; const tick=()=>{ const t=player.currentTime||0,col=new Uint8Array(64);
+  for(let i=0;i<64;i++){const b=Math.sin(i*0.35+t*9+seed)*Math.sin(i*0.11+t*3);col[i]=Math.max(0,b)*255*(0.5+0.5*Math.sin(t*6+seed));}
+  paint(col); if(!player.paused&&!player.ended)rafId=requestAnimationFrame(tick); }; tick(); }
+
+/* ================= learn ================= */
+let learnPlayingId=null;
+function renderLearn(filter){
+  const q=norm(filter||'');
+  const list=SPECIES.filter(s=>!q||norm(s.en+' '+s.sci+' '+famLabel(s.fam)+' '+s.fam).includes(q))
+    .sort((a,b)=>a.fam.localeCompare(b.fam)||a.en.localeCompare(b.en));
+  el('learnBar').innerHTML=list.length+' species';
+  const box=el('learnList'); box.innerHTML=''; let cur='';
+  list.forEach(s=>{
+    if(s.fam!==cur){ cur=s.fam; const h=document.createElement('div'); h.className='lfam'; h.textContent=famLabel(s.fam)+' · '+s.fam; box.appendChild(h); }
+    const row=document.createElement('div'); row.className='lrow'; row.dataset.id=s.id;
+    row.innerHTML='<button class="lplay" aria-label="Play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>'+
+      '<div class="lname">'+s.en+'<small>'+s.sci+'</small></div>';
+    row.querySelector('.lplay').onclick=()=>learnPlay(s.id,row);
+    box.appendChild(row);
+  });
+}
+el('learnSearch').addEventListener('input',e=>renderLearn(e.target.value));
+function clearLearnPlaying(){ document.querySelectorAll('.lrow.playing').forEach(r=>r.classList.remove('playing')); learnPlayingId=null; }
+async function learnPlay(id,row){
+  audioMode='learn'; ensureCtx(); stopAudio(); clearLearnPlaying();
+  row.classList.add('playing'); learnPlayingId=id;
+  el('learnBar').textContent='Loading recording…';
+  const rec=await fetchRec(id);
+  if(learnPlayingId!==id)return;
+  const s=SPECIES[id];
+  if(rec&&rec.audioUrl){ player.src=rec.audioUrl;
+    player.play().then(()=>{ el('learnBar').innerHTML=s.en+' — by <strong>'+rec.rec+'</strong> · <span class="lic">'+rec.lic+'</span>'+(rec.ref?' · <a href="'+rec.ref+'" target="_blank" rel="noopener">Xeno-canto \u2197</a>':''); })
+      .catch(()=>{ el('learnBar').textContent=s.en+' — clip blocked (try again).'; clearLearnPlaying(); });
+  } else { el('learnBar').textContent='No Creative-Commons clip found for '+s.en+'.'; clearLearnPlaying(); }
+}
 </script>
 </body>
 </html>
