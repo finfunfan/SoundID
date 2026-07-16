@@ -94,6 +94,10 @@
   .attrib{font-size:11.5px;color:var(--muted)}
   .attrib .lic{color:var(--moss)}
   .attrib a{text-decoration:none;border-bottom:1px dotted var(--line)}
+  .recctl{display:none;align-items:center;gap:12px;margin-top:10px;font-size:11.5px;color:var(--muted);flex-wrap:wrap}
+  .recctl button{background:none;border:1px solid var(--line);color:var(--muted);font-family:inherit;font-size:11.5px;border-radius:16px;padding:4px 11px;cursor:pointer}
+  .recctl button:hover{border-color:var(--amber);color:var(--ink)}
+  .recctl .typ{font-family:"IBM Plex Mono",monospace;color:var(--amber);letter-spacing:.03em}
   .typerow{display:flex;gap:9px;margin-top:20px}
   .typerow input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-family:inherit;font-size:15px;padding:13px 15px;outline:none}
   .typerow input:focus{border-color:var(--amber)}
@@ -210,6 +214,7 @@
           <button class="play" id="playBtn" aria-label="Play or pause"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
           <div class="attrib" id="clipNote"></div>
         </div>
+        <div class="recctl" id="recCtl"><span id="recMeta"></span><button id="recAnother">↻ another recording</button></div>
         <div class="typerow"><input id="typeInput" placeholder="Type the species name…" autocomplete="off" spellcheck="false" /><button class="checkbtn" id="checkBtn">Check</button></div>
         <div class="altlinks">
           <button id="famToggle">Only know the family? <span class="halfnote">+½</span></button>
@@ -538,7 +543,7 @@ const matches=(t,s)=>accepted(s).has(norm(t));
 /* ================= state ================= */
 const state={mode:'all',season:'any',enabled:new Set(ALL_FAMS),
   ctx:'quiz',           // 'quiz' | 'daily'
-  current:null,score:0,mediaReal:false,dailyDone:false};
+  current:null,score:0,mediaReal:false,dailyDone:false,recList:[],recIdx:0};
 
 /* ================= navigation (each opens a new window) ================= */
 function openScreen(name){
@@ -618,7 +623,7 @@ function nextBird(){ const p=pool(); if(!p.length) return; state.current=p[Math.
   renderQuestion(); playClip(state.current); }
 function renderQuestion(){
   const s=SPECIES[state.current];
-  el('reveal').className='reveal'; el('reveal').innerHTML=''; el('feedback').innerHTML=''; el('famAns').className='famans';
+  el('reveal').className='reveal'; el('reveal').innerHTML=''; el('feedback').innerHTML=''; el('famAns').className='famans'; el('recCtl').style.display='none';
   el('clipNote').innerHTML = s.hasReal ? updateClipHTML(s) : 'Press play to stream a Creative-Commons recording.';
   const inp=el('typeInput'); inp.value=''; inp.disabled=false; el('checkBtn').disabled=false;
   setPlayIcon(false); setTimeout(()=>inp.focus(),0);
@@ -654,17 +659,26 @@ const recCache=new Map();
 const licShort=u=>{if(!u)return'CC';const m=u.match(/licenses\/([a-z-]+)/i);return m?('CC-'+m[1].toUpperCase()):'CC';};
 async function fetchRec(id){
   if(recCache.has(id))return recCache.get(id);
+  const typeScore=t=>{t=(t||'').toLowerCase();return t.includes('song')?3:t.includes('call')?2:t?1:0;};
   try{
-    const url='https://api.gbif.org/v1/occurrence/search?datasetKey='+XC_DATASET+'&scientificName='+encodeURIComponent(SPECIES[id].sci)+'&mediaType=Sound&limit=40';
+    const url='https://api.gbif.org/v1/occurrence/search?datasetKey='+XC_DATASET+'&scientificName='+encodeURIComponent(SPECIES[id].sci)+'&mediaType=Sound&limit=80';
     const data=await(await fetch(url)).json();
-    const c=[];
-    for(const r of (data.results||[])) for(const m of (r.media||[])){
-      const snd=(m.type==='Sound')||/audio/i.test(m.format||''); const lic=m.license||r.license||'';
-      if(snd&&m.identifier&&/creativecommons/i.test(lic)) c.push({audioUrl:m.identifier,ref:m.references||'',rec:m.creator||m.rightsHolder||r.recordedBy||'unknown recordist',lic:licShort(lic)});
+    const seen=new Set(), c=[];
+    for(const r of (data.results||[])){
+      const type=r.behavior||r.occurrenceRemarks||'';       // Xeno-canto sound type -> DwC behavior
+      for(const m of (r.media||[])){
+        const snd=(m.type==='Sound')||/audio/i.test(m.format||''); const lic=m.license||r.license||'';
+        if(snd&&m.identifier&&/creativecommons/i.test(lic)&&!seen.has(m.identifier)){
+          seen.add(m.identifier);
+          c.push({audioUrl:m.identifier,ref:m.references||'',rec:m.creator||m.rightsHolder||r.recordedBy||'unknown recordist',lic:licShort(lic),type:cleanType(type||m.description||'')});
+        }
+      }
     }
-    const p=c.length?c[Math.floor(Math.random()*Math.min(c.length,15))]:null; recCache.set(id,p); return p;
-  }catch(e){ recCache.set(id,null); return null; }
+    c.sort((a,b)=>typeScore(b.type)-typeScore(a.type));       // songs first (most characteristic)
+    const list=c.slice(0,3); recCache.set(id,list); return list;
+  }catch(e){ recCache.set(id,[]); return []; }
 }
+function cleanType(t){ t=(t||'').trim(); if(!t||/uncertain|mystery/i.test(t))return''; t=t.split(/[,;]/)[0].trim(); return t.charAt(0).toUpperCase()+t.slice(1).toLowerCase(); }
 const player=el('player');
 let actx,analyser,freqData,rafId,playingSynth=false, audioMode='quiz';
 function ensureCtx(){ if(!actx){actx=new(window.AudioContext||window.webkitAudioContext)();analyser=actx.createAnalyser();analyser.fftSize=256;freqData=new Uint8Array(analyser.frequencyBinCount);} if(actx.state==='suspended')actx.resume(); }
@@ -673,15 +687,23 @@ function setStatus(t){ const e=el('scopeStatus'); if(e)e.textContent=t; }
 
 async function playClip(id){ // quiz/daily card
   if(id==null)return; audioMode='quiz'; ensureCtx(); stopAudio(); setStatus('finding a recording…');
-  const rec=await fetchRec(id); if(state.current!==id)return;
-  const s=SPECIES[id];
-  if(rec&&rec.audioUrl){ s.rec=rec.rec;s.lic=rec.lic;s.ref=rec.ref;s.hasReal=true; state.mediaReal=true;
-    el('clipNote').innerHTML=updateClipHTML(s); player.src=rec.audioUrl;
-    player.play().then(()=>{setStatus('streaming · xeno-canto via gbif');animate(id);}).catch(()=>{setStatus('clip blocked — tone');synth(id);});
-  } else { state.mediaReal=false; s.hasReal=false; el('clipNote').innerHTML='No clip found — playing a tone.'; synth(id); }
+  const list=await fetchRec(id); if(state.current!==id)return;
+  state.recList=list; state.recIdx=0;
+  if(list.length){ playCurrentRec(); }
+  else { state.mediaReal=false; SPECIES[id].hasReal=false; el('clipNote').innerHTML='No clip found — playing a tone.'; el('recCtl').style.display='none'; synth(id); }
+}
+function playCurrentRec(){
+  const id=state.current, list=state.recList, rec=list[state.recIdx]; if(!rec)return;
+  const s=SPECIES[id]; s.rec=rec.rec;s.lic=rec.lic;s.ref=rec.ref;s.hasReal=true; state.mediaReal=true;
+  el('clipNote').innerHTML=updateClipHTML(s);
+  el('recMeta').innerHTML='<span class="typ">'+(rec.type||'Recording')+'</span> · '+(state.recIdx+1)+' of '+list.length;
+  el('recCtl').style.display=(list.length>1||rec.type)?'flex':'none';
+  el('recAnother').style.display=list.length>1?'inline':'none';
+  audioMode='quiz'; ensureCtx(); player.src=rec.audioUrl;
+  player.play().then(()=>{setStatus('streaming · xeno-canto via gbif');animate(id);}).catch(()=>{setStatus('clip blocked — tone');synth(id);});
 }
 function togglePlay(){ if(state.current==null)return; ensureCtx();
-  if(state.mediaReal&&!player.ended&&player.src){ if(player.paused)player.play().then(()=>animate(state.current)).catch(()=>{}); else player.pause(); return; }
+  if(state.mediaReal&&player.src){ if(!player.paused){player.pause();return;} if(player.ended){playCurrentRec();return;} player.play().then(()=>animate(state.current)).catch(()=>{}); return; }
   playClip(state.current); }
 function synth(id){ playingSynth=true; setStatus('demo tone'); setPlayIcon(true);
   const t0=actx.currentTime,base=1500+((id*197)%2500),notes=3+(id%4),trill=id%3===0;
@@ -701,6 +723,7 @@ player.addEventListener('pause',()=>{ if(audioMode==='quiz')setPlayIcon(false); 
 player.addEventListener('ended',()=>{ cancelAnimationFrame(rafId); if(audioMode==='quiz'){setStatus('done');setPlayIcon(false);} else clearLearnPlaying(); });
 player.addEventListener('error',()=>{ if(audioMode==='quiz'&&state.mediaReal){setStatus('clip error — tone');synth(state.current);} });
 el('playBtn').onclick=togglePlay;
+el('recAnother').onclick=()=>{ if(state.recList.length<2)return; stopAudio(); state.recIdx=(state.recIdx+1)%state.recList.length; playCurrentRec(); };
 
 /* spectrogram */
 const cv=el('scope'),cx=cv.getContext('2d'); cx.fillStyle='#0c1817';cx.fillRect(0,0,cv.width,cv.height);
@@ -713,7 +736,6 @@ function animate(id){ const seed=id*13.7; const tick=()=>{ const t=player.curren
   paint(col); if(!player.paused&&!player.ended)rafId=requestAnimationFrame(tick); }; tick(); }
 
 /* ================= learn ================= */
-let learnPlayingId=null;
 function renderLearn(filter){
   const q=norm(filter||'');
   const list=SPECIES.filter(s=>!q||norm(s.en+' '+s.sci+' '+famLabel(s.fam)+' '+s.fam).includes(q))
@@ -730,18 +752,24 @@ function renderLearn(filter){
   });
 }
 el('learnSearch').addEventListener('input',e=>renderLearn(e.target.value));
+let learnPlayingId=null, learnList=[], learnIdx=0;
 function clearLearnPlaying(){ document.querySelectorAll('.lrow.playing').forEach(r=>r.classList.remove('playing')); learnPlayingId=null; }
 async function learnPlay(id,row){
-  audioMode='learn'; ensureCtx(); stopAudio(); clearLearnPlaying();
-  row.classList.add('playing'); learnPlayingId=id;
+  audioMode='learn'; ensureCtx();
+  if(learnPlayingId===id && learnList.length>1){ stopAudio(); learnIdx=(learnIdx+1)%learnList.length; playLearnCurrent(); return; }
+  stopAudio(); clearLearnPlaying(); row.classList.add('playing'); learnPlayingId=id;
   el('learnBar').textContent='Loading recording…';
-  const rec=await fetchRec(id);
-  if(learnPlayingId!==id)return;
-  const s=SPECIES[id];
-  if(rec&&rec.audioUrl){ player.src=rec.audioUrl;
-    player.play().then(()=>{ el('learnBar').innerHTML=s.en+' — by <strong>'+rec.rec+'</strong> · <span class="lic">'+rec.lic+'</span>'+(rec.ref?' · <a href="'+rec.ref+'" target="_blank" rel="noopener">Xeno-canto \u2197</a>':''); })
-      .catch(()=>{ el('learnBar').textContent=s.en+' — clip blocked (try again).'; clearLearnPlaying(); });
-  } else { el('learnBar').textContent='No Creative-Commons clip found for '+s.en+'.'; clearLearnPlaying(); }
+  const list=await fetchRec(id); if(learnPlayingId!==id)return;
+  if(!list.length){ el('learnBar').textContent='No Creative-Commons clip found for '+SPECIES[id].en+'.'; clearLearnPlaying(); return; }
+  learnList=list; learnIdx=0; playLearnCurrent();
+}
+function playLearnCurrent(){
+  const s=SPECIES[learnPlayingId], rec=learnList[learnIdx]; player.src=rec.audioUrl;
+  player.play().then(()=>{ el('learnBar').innerHTML=s.en+' — '+(rec.type?'<span class="lic" style="color:var(--amber)">'+rec.type+'</span> · ':'')
+      +'by <strong>'+rec.rec+'</strong> · <span class="lic">'+rec.lic+'</span>'
+      +(rec.ref?' · <a href="'+rec.ref+'" target="_blank" rel="noopener">Xeno-canto \u2197</a>':'')
+      +(learnList.length>1?' · <span style="color:var(--muted)">tap again for another ('+(learnIdx+1)+'/'+learnList.length+')</span>':''); })
+    .catch(()=>{ el('learnBar').textContent=s.en+' — clip blocked (try again).'; clearLearnPlaying(); });
 }
 </script>
 </body>
