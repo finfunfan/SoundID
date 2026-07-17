@@ -131,13 +131,25 @@
   .learnbar .lic{color:var(--moss)}
   .learnlist{display:flex;flex-direction:column}
   .lfam{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin:16px 2px 6px;border-bottom:1px solid var(--line);padding-bottom:5px}
-  .lrow{display:flex;align-items:center;gap:12px;padding:9px 8px;border-radius:10px}
-  .lrow:hover{background:var(--panel2)}
-  .lrow.playing{background:var(--panel2)}
+  .lrow{border-radius:10px}
+  .lrow.open{background:var(--panel2)}
+  .lhead{display:flex;align-items:center;gap:12px;padding:9px 8px;cursor:pointer;border-radius:10px}
+  .lhead:hover{background:var(--panel2)}
   .lplay{width:34px;height:34px;flex:0 0 auto;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:var(--amber);cursor:pointer;display:grid;place-items:center}
-  .lplay:hover{border-color:var(--amber)}
-  .lplay svg{width:14px;height:14px;fill:currentColor}
+  .lrow.open .lplay{border-color:var(--amber)}
+  .lplay svg{width:13px;height:13px;fill:currentColor}
   .lname{font-size:14px}.lname small{display:block;color:var(--muted);font-size:11.5px;font-style:italic}
+  .ldetail{display:none;padding:2px 10px 14px 54px}
+  .lrow.open .ldetail{display:block}
+  .typechips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+  .tchip{border:1px solid var(--line);background:transparent;color:var(--muted);font-family:inherit;font-size:12px;font-weight:500;padding:5px 11px;border-radius:16px;cursor:pointer}
+  .tchip:hover{border-color:var(--muted);color:var(--ink)}
+  .tchip.on{background:var(--amber);border-color:var(--amber);color:#20140a}
+  .tchip .cnt{opacity:.6;font-family:"IBM Plex Mono",monospace;font-size:10px;margin-left:4px}
+  .lnow{font-size:11.5px;color:var(--muted)}
+  .lnow .lic{color:var(--moss)} .lnow a{color:var(--amber);text-decoration:none;border-bottom:1px dotted var(--line)}
+  .lnow .another{border:1px solid var(--line);background:none;color:var(--muted);font-family:inherit;font-size:11px;border-radius:14px;padding:3px 9px;cursor:pointer;margin-left:8px}
+  .lnow .another:hover{border-color:var(--amber);color:var(--ink)}
 
   footer{margin-top:26px;color:var(--muted);font-size:12px;line-height:1.6;border-top:1px solid var(--line);padding-top:16px}
   footer code{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11.5px}
@@ -657,28 +669,45 @@ el('nextBtn').onclick=nextBird;
 const XC_DATASET="b1047888-ae52-4179-9dd5-5448ea342a24";
 const recCache=new Map();
 const licShort=u=>{if(!u)return'CC';const m=u.match(/licenses\/([a-z-]+)/i);return m?('CC-'+m[1].toUpperCase()):'CC';};
-async function fetchRec(id){
+const TYPE_ORDER=['Song','Call','Flight call','Nocturnal flight call','Alarm call','Subsong','Drumming','Begging call'];
+const typeRank=t=>{const i=TYPE_ORDER.indexOf(t);return i<0?90:i;};
+function canonType(t){
+  t=(t||'').toLowerCase();
+  if(/nocturnal|\bnfc\b/.test(t)) return 'Nocturnal flight call';
+  if(/flight/.test(t)) return 'Flight call';
+  if(/alarm/.test(t)) return 'Alarm call';
+  if(/sub-?song/.test(t)) return 'Subsong';
+  if(/drum/.test(t)) return 'Drumming';
+  if(/begging/.test(t)) return 'Begging call';
+  if(/song/.test(t)) return 'Song';
+  if(/call/.test(t)) return 'Call';
+  if(!t||/uncertain|mystery/.test(t)) return 'Other';
+  return t.charAt(0).toUpperCase()+t.slice(1);
+}
+async function fetchAll(id){
   if(recCache.has(id))return recCache.get(id);
-  const typeScore=t=>{t=(t||'').toLowerCase();return t.includes('song')?3:t.includes('call')?2:t?1:0;};
   try{
-    const url='https://api.gbif.org/v1/occurrence/search?datasetKey='+XC_DATASET+'&scientificName='+encodeURIComponent(SPECIES[id].sci)+'&mediaType=Sound&limit=80';
+    const url='https://api.gbif.org/v1/occurrence/search?datasetKey='+XC_DATASET+'&scientificName='+encodeURIComponent(SPECIES[id].sci)+'&mediaType=Sound&limit=120';
     const data=await(await fetch(url)).json();
     const seen=new Set(), c=[];
     for(const r of (data.results||[])){
-      const type=r.behavior||r.occurrenceRemarks||'';       // Xeno-canto sound type -> DwC behavior
+      const raw=r.behavior||r.occurrenceRemarks||'';           // Xeno-canto sound type -> DwC behavior
       for(const m of (r.media||[])){
         const snd=(m.type==='Sound')||/audio/i.test(m.format||''); const lic=m.license||r.license||'';
         if(snd&&m.identifier&&/creativecommons/i.test(lic)&&!seen.has(m.identifier)){
           seen.add(m.identifier);
-          c.push({audioUrl:m.identifier,ref:m.references||'',rec:m.creator||m.rightsHolder||r.recordedBy||'unknown recordist',lic:licShort(lic),type:cleanType(type||m.description||'')});
+          c.push({audioUrl:m.identifier,ref:m.references||'',rec:m.creator||m.rightsHolder||r.recordedBy||'unknown recordist',lic:licShort(lic),canon:canonType(raw||m.description||'')});
         }
       }
     }
-    c.sort((a,b)=>typeScore(b.type)-typeScore(a.type));       // songs first (most characteristic)
-    const list=c.slice(0,3); recCache.set(id,list); return list;
+    recCache.set(id,c); return c;
   }catch(e){ recCache.set(id,[]); return []; }
 }
-function cleanType(t){ t=(t||'').trim(); if(!t||/uncertain|mystery/i.test(t))return''; t=t.split(/[,;]/)[0].trim(); return t.charAt(0).toUpperCase()+t.slice(1).toLowerCase(); }
+// Group up to 3 recordings per sound type, ordered song-first.
+function groupByType(cands){
+  const g={}; cands.forEach(c=>{ (g[c.canon]=g[c.canon]||[]).push(c); });
+  return Object.keys(g).sort((a,b)=>typeRank(a)-typeRank(b)).map(t=>[t, g[t].slice(0,3)]);
+}
 const player=el('player');
 let actx,analyser,freqData,rafId,playingSynth=false, audioMode='quiz';
 function ensureCtx(){ if(!actx){actx=new(window.AudioContext||window.webkitAudioContext)();analyser=actx.createAnalyser();analyser.fftSize=256;freqData=new Uint8Array(analyser.frequencyBinCount);} if(actx.state==='suspended')actx.resume(); }
@@ -687,7 +716,8 @@ function setStatus(t){ const e=el('scopeStatus'); if(e)e.textContent=t; }
 
 async function playClip(id){ // quiz/daily card
   if(id==null)return; audioMode='quiz'; ensureCtx(); stopAudio(); setStatus('finding a recording…');
-  const list=await fetchRec(id); if(state.current!==id)return;
+  const all=await fetchAll(id); if(state.current!==id)return;
+  const list=all.slice().sort((a,b)=>typeRank(a.canon)-typeRank(b.canon)).slice(0,3);  // song-first
   state.recList=list; state.recIdx=0;
   if(list.length){ playCurrentRec(); }
   else { state.mediaReal=false; SPECIES[id].hasReal=false; el('clipNote').innerHTML='No clip found — playing a tone.'; el('recCtl').style.display='none'; synth(id); }
@@ -696,8 +726,8 @@ function playCurrentRec(){
   const id=state.current, list=state.recList, rec=list[state.recIdx]; if(!rec)return;
   const s=SPECIES[id]; s.rec=rec.rec;s.lic=rec.lic;s.ref=rec.ref;s.hasReal=true; state.mediaReal=true;
   el('clipNote').innerHTML=updateClipHTML(s);
-  el('recMeta').innerHTML='<span class="typ">'+(rec.type||'Recording')+'</span> · '+(state.recIdx+1)+' of '+list.length;
-  el('recCtl').style.display=(list.length>1||rec.type)?'flex':'none';
+  el('recMeta').innerHTML='<span class="typ">'+(rec.canon||'Recording')+'</span> · '+(state.recIdx+1)+' of '+list.length;
+  el('recCtl').style.display='flex';
   el('recAnother').style.display=list.length>1?'inline':'none';
   audioMode='quiz'; ensureCtx(); player.src=rec.audioUrl;
   player.play().then(()=>{setStatus('streaming · xeno-canto via gbif');animate(id);}).catch(()=>{setStatus('clip blocked — tone');synth(id);});
@@ -740,36 +770,52 @@ function renderLearn(filter){
   const q=norm(filter||'');
   const list=SPECIES.filter(s=>!q||norm(s.en+' '+s.sci+' '+famLabel(s.fam)+' '+s.fam).includes(q))
     .sort((a,b)=>a.fam.localeCompare(b.fam)||a.en.localeCompare(b.en));
-  el('learnBar').innerHTML=list.length+' species';
+  el('learnBar').innerHTML=list.length+' species · tap one to choose a sound type';
   const box=el('learnList'); box.innerHTML=''; let cur='';
   list.forEach(s=>{
     if(s.fam!==cur){ cur=s.fam; const h=document.createElement('div'); h.className='lfam'; h.textContent=famLabel(s.fam)+' · '+s.fam; box.appendChild(h); }
     const row=document.createElement('div'); row.className='lrow'; row.dataset.id=s.id;
-    row.innerHTML='<button class="lplay" aria-label="Play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>'+
-      '<div class="lname">'+s.en+'<small>'+s.sci+'</small></div>';
-    row.querySelector('.lplay').onclick=()=>learnPlay(s.id,row);
+    row.innerHTML='<div class="lhead"><button class="lplay" aria-label="Open"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>'+
+      '<div class="lname">'+s.en+'<small>'+s.sci+'</small></div></div><div class="ldetail"></div>';
+    row.querySelector('.lhead').onclick=()=>toggleLearnRow(s.id,row);
     box.appendChild(row);
   });
 }
 el('learnSearch').addEventListener('input',e=>renderLearn(e.target.value));
-let learnPlayingId=null, learnList=[], learnIdx=0;
-function clearLearnPlaying(){ document.querySelectorAll('.lrow.playing').forEach(r=>r.classList.remove('playing')); learnPlayingId=null; }
-async function learnPlay(id,row){
+
+let learnOpenId=null, learnTypeRecs=[], learnTypeIdx=0, learnDetailEl=null;
+function clearLearnPlaying(){ /* audio ended in learn mode — nothing to reset visually */ }
+function collapseLearn(){ document.querySelectorAll('.lrow.open').forEach(r=>r.classList.remove('open')); learnOpenId=null; learnDetailEl=null; }
+
+async function toggleLearnRow(id,row){
   audioMode='learn'; ensureCtx();
-  if(learnPlayingId===id && learnList.length>1){ stopAudio(); learnIdx=(learnIdx+1)%learnList.length; playLearnCurrent(); return; }
-  stopAudio(); clearLearnPlaying(); row.classList.add('playing'); learnPlayingId=id;
-  el('learnBar').textContent='Loading recording…';
-  const list=await fetchRec(id); if(learnPlayingId!==id)return;
-  if(!list.length){ el('learnBar').textContent='No Creative-Commons clip found for '+SPECIES[id].en+'.'; clearLearnPlaying(); return; }
-  learnList=list; learnIdx=0; playLearnCurrent();
+  if(learnOpenId===id){ stopAudio(); collapseLearn(); return; }   // tap again to close
+  stopAudio(); collapseLearn();
+  row.classList.add('open'); learnOpenId=id; learnDetailEl=row.querySelector('.ldetail');
+  learnDetailEl.innerHTML='<div class="lnow">Loading recordings…</div>';
+  const cands=await fetchAll(id); if(learnOpenId!==id)return;
+  const groups=groupByType(cands);
+  if(!groups.length){ learnDetailEl.innerHTML='<div class="lnow">No Creative-Commons recordings found for this species.</div>'; return; }
+  const chips=groups.map(([t,recs],i)=>'<button class="tchip'+(i===0?' on':'')+'" data-type="'+t+'">'+t+'<span class="cnt">'+recs.length+'</span></button>').join('');
+  learnDetailEl.innerHTML='<div class="typechips">'+chips+'</div><div class="lnow" id="lnow-'+id+'"></div>';
+  learnDetailEl.querySelectorAll('.tchip').forEach(b=>b.onclick=()=>{
+    learnDetailEl.querySelectorAll('.tchip').forEach(x=>x.classList.toggle('on',x===b));
+    const g=groups.find(x=>x[0]===b.dataset.type); selectLearnType(id,g[1]);
+  });
+  selectLearnType(id, groups[0][1]);   // auto-play first type (song where available)
 }
-function playLearnCurrent(){
-  const s=SPECIES[learnPlayingId], rec=learnList[learnIdx]; player.src=rec.audioUrl;
-  player.play().then(()=>{ el('learnBar').innerHTML=s.en+' — '+(rec.type?'<span class="lic" style="color:var(--amber)">'+rec.type+'</span> · ':'')
-      +'by <strong>'+rec.rec+'</strong> · <span class="lic">'+rec.lic+'</span>'
+function selectLearnType(id,recs){ stopAudio(); learnTypeRecs=recs; learnTypeIdx=0; playLearnRec(id); }
+function playLearnRec(id){
+  const rec=learnTypeRecs[learnTypeIdx]; const bar=learnDetailEl&&learnDetailEl.querySelector('.lnow'); if(!rec||!bar)return;
+  player.src=rec.audioUrl;
+  player.play().then(()=>{
+    bar.innerHTML='by <strong>'+rec.rec+'</strong> · <span class="lic">'+rec.lic+'</span>'
       +(rec.ref?' · <a href="'+rec.ref+'" target="_blank" rel="noopener">Xeno-canto \u2197</a>':'')
-      +(learnList.length>1?' · <span style="color:var(--muted)">tap again for another ('+(learnIdx+1)+'/'+learnList.length+')</span>':''); })
-    .catch(()=>{ el('learnBar').textContent=s.en+' — clip blocked (try again).'; clearLearnPlaying(); });
+      +(learnTypeRecs.length>1?'<button class="another">↻ another ('+(learnTypeIdx+1)+'/'+learnTypeRecs.length+')</button>':'');
+    const a=bar.querySelector('.another'); if(a)a.onclick=()=>{ stopAudio(); learnTypeIdx=(learnTypeIdx+1)%learnTypeRecs.length; playLearnRec(id); };
+  }).catch(()=>{ bar.innerHTML='<span style="color:var(--coral)">Clip blocked — try another.</span>'
+      +(learnTypeRecs.length>1?'<button class="another">↻ another</button>':'');
+    const a=bar.querySelector('.another'); if(a)a.onclick=()=>{ stopAudio(); learnTypeIdx=(learnTypeIdx+1)%learnTypeRecs.length; playLearnRec(id); }; });
 }
 </script>
 </body>
