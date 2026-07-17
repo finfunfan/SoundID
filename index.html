@@ -152,6 +152,11 @@
   .lplaybtn{width:46px;height:46px;flex:0 0 auto;border-radius:50%;border:1px solid var(--line);background:radial-gradient(120% 120% at 30% 25%,#20372f,#122120);color:var(--amber);cursor:pointer;display:grid;place-items:center;transition:.15s}
   .lplaybtn:hover{border-color:var(--amber);transform:translateY(-1px)}
   .lplaybtn svg{width:19px;height:19px;fill:currentColor}
+  .lseekwrap{flex:1;min-width:0}
+  .lseek{width:100%;-webkit-appearance:none;appearance:none;height:5px;border-radius:3px;background:var(--line);outline:none;cursor:pointer}
+  .lseek::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--amber);cursor:pointer;border:0}
+  .lseek::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--amber);cursor:pointer;border:0}
+  .ltime{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);margin-top:6px}
   .lnow{font-size:11.5px;color:var(--muted);line-height:1.6}
   .lnow .lic{color:var(--moss)} .lnow a{color:var(--amber);text-decoration:none;border-bottom:1px dotted var(--line)}
   .lnow .another{border:1px solid var(--line);background:none;color:var(--muted);font-family:inherit;font-size:11px;border-radius:14px;padding:3px 9px;cursor:pointer;margin-left:8px}
@@ -552,7 +557,16 @@ const SPECIES = RAW.map((r,i)=>({id:i,en:r[0],de:r[1],sci:r[2],reg:r[3],fam:r[4]
   common:(r[2] in COMMON), status:(COMMON[r[2]]||'R'),
   xcId:null,rec:null,lic:null,ref:null,hasReal:false}));
 const famLabel=f=>FAMILY_LABELS[f]||f;
-const ALL_FAMS=[...new Set(SPECIES.map(s=>s.fam))].sort((a,b)=>famLabel(a).localeCompare(famLabel(b)));
+// Conventional field-guide / checklist order (waterfowl first, passerines last)
+const FAM_ORDER=["Anatidae","Phasianidae","Podicipedidae","Columbidae","Otididae","Cuculidae","Caprimulgidae","Apodidae",
+"Rallidae","Gruidae","Haematopodidae","Recurvirostridae","Burhinidae","Charadriidae","Scolopacidae","Laridae","Alcidae",
+"Gaviidae","Procellariidae","Hydrobatidae","Ciconiidae","Sulidae","Phalacrocoracidae","Threskiornithidae","Ardeidae",
+"Pandionidae","Accipitridae","Tytonidae","Strigidae","Upupidae","Meropidae","Coraciidae","Alcedinidae","Picidae","Falconidae",
+"Oriolidae","Laniidae","Corvidae","Paridae","Panuridae","Remizidae","Alaudidae","Cisticolidae","Acrocephalidae","Locustellidae",
+"Hirundinidae","Phylloscopidae","Aegithalidae","Sylviidae","Regulidae","Troglodytidae","Sittidae","Tichodromidae","Certhiidae",
+"Sturnidae","Cinclidae","Turdidae","Muscicapidae","Prunellidae","Passeridae","Motacillidae","Fringillidae","Emberizidae"];
+const famRank=f=>{const i=FAM_ORDER.indexOf(f);return i<0?999:i;};
+const ALL_FAMS=[...new Set(SPECIES.map(s=>s.fam))].sort((a,b)=>famRank(a)-famRank(b));
 const el=id=>document.getElementById(id);
 
 /* ================= matching ================= */
@@ -633,7 +647,7 @@ function enterDaily(){
 /* ================= family-answer chips ================= */
 function buildFamAns(){
   const box=el('famAns'); box.querySelectorAll('.chip').forEach(n=>n.remove());
-  const fams=[...new Set(pool().map(s=>s.fam))].sort((a,b)=>famLabel(a).localeCompare(famLabel(b)));
+  const fams=[...new Set(pool().map(s=>s.fam))].sort((a,b)=>famRank(a)-famRank(b));
   (fams.length?fams:ALL_FAMS).forEach(f=>{ const b=document.createElement('button'); b.className='chip mini'; b.textContent=famLabel(f); b.title=f;
     b.onclick=()=>commit('half',f); box.appendChild(b); });
 }
@@ -760,6 +774,9 @@ const setPlayIcon=on=>{ const b=el('playBtn'); if(b&&audioMode==='quiz')b.innerH
 player.addEventListener('play',()=>{ if(audioMode==='quiz')setPlayIcon(true); else setLearnIcon(true); });
 player.addEventListener('pause',()=>{ if(audioMode==='quiz')setPlayIcon(false); else setLearnIcon(false); });
 player.addEventListener('ended',()=>{ cancelAnimationFrame(rafId); if(audioMode==='quiz'){setStatus('done');setPlayIcon(false);} else setLearnIcon(false); });
+player.addEventListener('loadedmetadata',()=>{ if(audioMode==='learn'&&learnDur&&isFinite(player.duration)) learnDur.textContent=fmtTime(player.duration); });
+player.addEventListener('timeupdate',()=>{ if(audioMode!=='learn'||!learnSeek||learnScrubbing)return;
+  if(isFinite(player.duration)&&player.duration>0){ learnSeek.value=Math.round(player.currentTime/player.duration*1000); learnCur.textContent=fmtTime(player.currentTime); } });
 player.addEventListener('error',()=>{ if(audioMode==='quiz'&&state.mediaReal){setStatus('clip error — tone');synth(state.current);} });
 el('playBtn').onclick=togglePlay;
 el('recAnother').onclick=()=>{ if(state.recList.length<2)return; stopAudio(); state.recIdx=(state.recIdx+1)%state.recList.length; playCurrentRec(); };
@@ -778,7 +795,7 @@ function animate(id){ const seed=id*13.7; const tick=()=>{ const t=player.curren
 function renderLearn(filter){
   const q=norm(filter||'');
   const list=SPECIES.filter(s=>!q||norm(s.en+' '+s.sci+' '+famLabel(s.fam)+' '+s.fam).includes(q))
-    .sort((a,b)=>a.fam.localeCompare(b.fam)||a.en.localeCompare(b.en));
+    .sort((a,b)=>famRank(a.fam)-famRank(b.fam)||a.en.localeCompare(b.en));
   el('learnBar').innerHTML=list.length+' species';
   const box=el('learnList'); box.innerHTML=''; let cur='';
   list.forEach(s=>{
@@ -792,10 +809,11 @@ function renderLearn(filter){
 el('learnSearch').addEventListener('input',e=>renderLearn(e.target.value));
 
 const LPLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>', LPAUSE='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
-let learnOpenId=null, learnTypeRecs=[], learnTypeIdx=0, learnDetailEl=null, learnPlayBtn=null;
+let learnOpenId=null, learnTypeRecs=[], learnTypeIdx=0, learnDetailEl=null, learnPlayBtn=null, learnSeek=null, learnCur=null, learnDur=null, learnScrubbing=false;
+const fmtTime=s=>{ s=Math.max(0,Math.floor(s||0)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
 function setLearnIcon(on){ if(learnPlayBtn) learnPlayBtn.innerHTML=on?LPAUSE:LPLAY; }
 function clearLearnPlaying(){ setLearnIcon(false); }
-function collapseLearn(){ document.querySelectorAll('.lrow.open').forEach(r=>r.classList.remove('open')); learnOpenId=null; learnDetailEl=null; learnPlayBtn=null; }
+function collapseLearn(){ document.querySelectorAll('.lrow.open').forEach(r=>r.classList.remove('open')); learnOpenId=null; learnDetailEl=null; learnPlayBtn=null; learnSeek=null; learnCur=null; learnDur=null; }
 
 async function toggleLearnRow(id,row){
   audioMode='learn'; ensureCtx();
@@ -808,9 +826,15 @@ async function toggleLearnRow(id,row){
   if(!groups.length){ learnDetailEl.innerHTML='<div class="lnow">No Creative-Commons recordings found for this species.</div>'; return; }
   const chips=groups.map(([t,recs],i)=>'<button class="tchip'+(i===0?' on':'')+'" data-type="'+t+'">'+t+'<span class="cnt">'+recs.length+'</span></button>').join('');
   learnDetailEl.innerHTML='<div class="typechips"><span class="thint">Choose a sound type:</span>'+chips+'</div>'+
-    '<div class="lctrls"><button class="lplaybtn" aria-label="Play or pause">'+LPLAY+'</button><div class="lnow"></div></div>';
+    '<div class="lctrls"><button class="lplaybtn" aria-label="Play or pause">'+LPLAY+'</button>'+
+    '<div class="lseekwrap"><input type="range" class="lseek" min="0" max="1000" value="0" step="1" aria-label="Seek">'+
+    '<div class="ltime"><span class="lcur">0:00</span> / <span class="ldur">0:00</span></div></div></div>'+
+    '<div class="lnow"></div>';
   learnPlayBtn=learnDetailEl.querySelector('.lplaybtn');
+  learnSeek=learnDetailEl.querySelector('.lseek'); learnCur=learnDetailEl.querySelector('.lcur'); learnDur=learnDetailEl.querySelector('.ldur');
   learnPlayBtn.onclick=()=>learnTogglePlay(id);
+  learnSeek.addEventListener('input',()=>{ learnScrubbing=true; if(player.duration){ const t=learnSeek.value/1000*player.duration; player.currentTime=t; learnCur.textContent=fmtTime(t); } });
+  learnSeek.addEventListener('change',()=>{ learnScrubbing=false; });
   learnDetailEl.querySelectorAll('.tchip').forEach(b=>b.onclick=()=>{
     learnDetailEl.querySelectorAll('.tchip').forEach(x=>x.classList.toggle('on',x===b));
     const g=groups.find(x=>x[0]===b.dataset.type); loadLearnType(id,g[1]);
@@ -821,6 +845,7 @@ function loadLearnType(id,recs){ stopAudio(); setLearnIcon(false); learnTypeRecs
 function showLearnRec(id){   // load into player + update info; does NOT auto-play
   const rec=learnTypeRecs[learnTypeIdx]; const bar=learnDetailEl&&learnDetailEl.querySelector('.lnow'); if(!rec||!bar)return;
   audioMode='learn'; player.src=rec.audioUrl; setLearnIcon(false);
+  if(learnSeek){ learnSeek.value=0; } if(learnCur) learnCur.textContent='0:00'; if(learnDur) learnDur.textContent='0:00';
   bar.innerHTML='Press play. Recording by <strong>'+rec.rec+'</strong> · <span class="lic">'+rec.lic+'</span>'
     +(rec.ref?' · <a href="'+rec.ref+'" target="_blank" rel="noopener">Xeno-canto \u2197</a>':'')
     +(learnTypeRecs.length>1?'<button class="another">↻ another ('+(learnTypeIdx+1)+'/'+learnTypeRecs.length+')</button>':'');
